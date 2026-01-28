@@ -1,0 +1,2978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spawn - iOS Mockups</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #1c1c1e;
+            --bg-tertiary: #2c2c2e;
+            --bg-quaternary: #3a3a3c;
+            --text-primary: #ffffff;
+            --text-secondary: #8e8e93;
+            --text-tertiary: #636366;
+            --accent-blue: #0a84ff;
+            --accent-green: #30d158;
+            --accent-yellow: #ff2d92;
+            --accent-red: #ff453a;
+            --accent-orange: #ff6b6b;
+            --accent-pink: #ff2d92;
+            --separator: #38383a;
+            --spawn-pink: #ff2d92;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', sans-serif;
+            background: #000;
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 40px;
+        }
+        
+        .mockup-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            justify-content: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .mockup-section {
+            margin-bottom: 60px;
+        }
+        
+        .mockup-section h2 {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: var(--text-secondary);
+        }
+        
+        /* iPhone Frame */
+        .iphone-frame {
+            width: 390px;
+            height: 844px;
+            background: var(--bg-primary);
+            border-radius: 50px;
+            padding: 12px;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.5), inset 0 0 0 3px #1a1a1a;
+            position: relative;
+        }
+        
+        .iphone-screen {
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Dynamic Island */
+        .dynamic-island {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #000;
+            border-radius: 20px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .dynamic-island.compact {
+            width: 126px;
+            height: 37px;
+        }
+        
+        .dynamic-island.expanded {
+            width: 350px;
+            height: auto;
+            padding: 16px;
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .di-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--accent-blue);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        
+        .di-text {
+            font-size: 12px;
+            font-weight: 500;
+            flex: 1;
+        }
+        
+        .di-status {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-green);
+            border-radius: 50%;
+        }
+        
+        .di-progress {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-green);
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Navigation Bar */
+        .nav-bar {
+            height: 96px;
+            padding: 50px 16px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 0.5px solid var(--separator);
+        }
+        
+        .nav-back {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--accent-blue);
+            font-size: 17px;
+        }
+        
+        .nav-title {
+            text-align: center;
+        }
+        
+        .nav-title h1 {
+            font-size: 17px;
+            font-weight: 600;
+        }
+        
+        .nav-title .status {
+            font-size: 12px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+        
+        .nav-title .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-green);
+        }
+        
+        .nav-title .status-dot.working {
+            background: var(--accent-blue);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        
+        .nav-action {
+            color: var(--accent-blue);
+            font-size: 22px;
+            width: 44px;
+            text-align: right;
+        }
+        
+        /* Message List */
+        .message-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        /* User Message */
+        .user-message {
+            align-self: flex-end;
+            background: var(--accent-blue);
+            padding: 10px 14px;
+            border-radius: 18px;
+            border-bottom-right-radius: 4px;
+            max-width: 80%;
+            font-size: 16px;
+            line-height: 1.4;
+        }
+        
+        /* Agent Message */
+        .agent-message {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+        
+        .agent-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        
+        .agent-avatar.main {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .agent-avatar.sub {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            font-size: 14px;
+        }
+        
+        .agent-avatar.analyzer {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+        
+        .agent-avatar.executor {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .agent-avatar.risk {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+        
+        .agent-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .agent-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+        
+        .agent-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .agent-time {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+        
+        .agent-bubble {
+            background: var(--bg-secondary);
+            padding: 12px 14px;
+            border-radius: 16px;
+            border-top-left-radius: 4px;
+            font-size: 15px;
+            line-height: 1.4;
+        }
+        
+        /* Delegation Section */
+        .delegation-section {
+            margin-left: 46px;
+            position: relative;
+        }
+        
+        .delegation-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 0;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+        
+        .delegation-header svg {
+            width: 12px;
+            height: 12px;
+        }
+        
+        /* Sub-agent Message */
+        .sub-agent-message {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+            margin: 8px 0;
+            position: relative;
+            padding-left: 20px;
+        }
+        
+        .sub-agent-message::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 50%;
+            width: 12px;
+            border-left: 2px solid var(--bg-quaternary);
+            border-bottom: 2px solid var(--bg-quaternary);
+            border-bottom-left-radius: 8px;
+        }
+        
+        .sub-agent-message:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            bottom: -8px;
+            width: 2px;
+            background: var(--bg-quaternary);
+        }
+        
+        .sub-agent-content {
+            flex: 1;
+        }
+        
+        .sub-agent-bubble {
+            background: var(--bg-tertiary);
+            padding: 10px 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .sub-agent-name {
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .sub-agent-time {
+            font-size: 11px;
+            color: var(--text-tertiary);
+        }
+        
+        /* Task List inside bubble */
+        .task-list {
+            margin-top: 8px;
+        }
+        
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 0;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        .task-item .icon {
+            font-size: 10px;
+        }
+        
+        .task-item.complete .icon {
+            color: var(--accent-green);
+        }
+        
+        /* Confirmation Card */
+        .confirmation-card {
+            background: var(--bg-tertiary);
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid var(--spawn-pink);
+        }
+        
+        .confirmation-card.danger {
+            border-color: var(--accent-red);
+            background: rgba(255, 69, 58, 0.1);
+        }
+        
+        .confirmation-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .confirmation-header.warning {
+            color: var(--spawn-pink);
+        }
+        
+        .confirmation-header.danger {
+            color: var(--accent-red);
+        }
+        
+        .confirmation-details {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 14px;
+        }
+        
+        .detail-row:not(:last-child) {
+            border-bottom: 0.5px solid var(--separator);
+        }
+        
+        .detail-label {
+            color: var(--text-secondary);
+        }
+        
+        .detail-value {
+            font-weight: 500;
+        }
+        
+        .confirmation-timer {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+        
+        /* Slide to Confirm */
+        .slide-confirm {
+            height: 52px;
+            background: rgba(255, 69, 58, 0.2);
+            border-radius: 26px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .slide-confirm-text {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--accent-red);
+        }
+        
+        .slide-confirm-thumb {
+            position: absolute;
+            left: 4px;
+            top: 4px;
+            width: 44px;
+            height: 44px;
+            background: var(--accent-red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            box-shadow: 0 2px 8px rgba(255, 69, 58, 0.4);
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .btn-secondary {
+            background: var(--bg-quaternary);
+            color: var(--text-primary);
+        }
+        
+        .btn-primary {
+            background: var(--accent-blue);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: var(--accent-red);
+            color: white;
+        }
+        
+        /* Input Bar */
+        .input-bar {
+            padding: 8px 16px 34px;
+            border-top: 0.5px solid var(--separator);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .input-field {
+            flex: 1;
+            background: var(--bg-secondary);
+            border: none;
+            border-radius: 20px;
+            padding: 10px 16px;
+            font-size: 16px;
+            color: var(--text-primary);
+            outline: none;
+        }
+        
+        .input-field::placeholder {
+            color: var(--text-tertiary);
+        }
+        
+        .send-btn {
+            width: 36px;
+            height: 36px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+        }
+        
+        /* Sidebar Mockup */
+        .sidebar-mockup {
+            width: 320px;
+            height: 844px;
+            background: var(--bg-primary);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.5);
+        }
+        
+        .sidebar-header {
+            padding: 60px 16px 16px;
+            border-bottom: 0.5px solid var(--separator);
+        }
+        
+        .sidebar-header h1 {
+            font-size: 34px;
+            font-weight: 700;
+        }
+        
+        .sidebar-search {
+            margin-top: 12px;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-tertiary);
+            font-size: 15px;
+        }
+        
+        .sidebar-content {
+            padding: 16px;
+        }
+        
+        .agent-group {
+            margin-bottom: 24px;
+        }
+        
+        .agent-group-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 0;
+            cursor: pointer;
+        }
+        
+        .agent-group-icon {
+            width: 8px;
+            height: 8px;
+            color: var(--text-secondary);
+        }
+        
+        .agent-group-name {
+            font-size: 16px;
+            font-weight: 600;
+            flex: 1;
+        }
+        
+        .agent-group-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-green);
+        }
+        
+        .sub-agent-list {
+            margin-left: 16px;
+            border-left: 2px solid var(--bg-tertiary);
+            padding-left: 12px;
+        }
+        
+        .sub-agent-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        .sub-agent-item:hover, .sub-agent-item.active {
+            background: var(--bg-secondary);
+        }
+        
+        .sub-agent-item .avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        
+        .sub-agent-item .info {
+            flex: 1;
+        }
+        
+        .sub-agent-item .name {
+            font-size: 15px;
+            font-weight: 500;
+        }
+        
+        .sub-agent-item .desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        .sub-agent-item .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        
+        .status-dot.online { background: var(--accent-green); }
+        .status-dot.working { background: var(--accent-blue); animation: pulse 1.5s ease-in-out infinite; }
+        .status-dot.paused { background: var(--text-tertiary); }
+        .status-dot.error { background: var(--accent-red); }
+        
+        /* Card Component */
+        .stat-card {
+            background: var(--bg-tertiary);
+            border-radius: 14px;
+            padding: 14px;
+            margin-top: 8px;
+        }
+        
+        .stat-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .stat-card-title {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .stat-card-badge {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+        
+        .stat-card-badge.positive {
+            background: rgba(48, 209, 88, 0.2);
+            color: var(--accent-green);
+        }
+        
+        .stat-card-value {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        
+        .stat-card-details {
+            display: flex;
+            gap: 16px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 0.5px solid var(--separator);
+        }
+        
+        .stat-detail {
+            font-size: 12px;
+        }
+        
+        .stat-detail-label {
+            color: var(--text-secondary);
+        }
+        
+        .stat-detail-value {
+            font-weight: 500;
+            margin-top: 2px;
+        }
+        
+        /* Skeleton Loader */
+        .skeleton {
+            background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--bg-quaternary) 50%, var(--bg-tertiary) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 4px;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        .skeleton-text {
+            height: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .skeleton-text.short { width: 60%; }
+        .skeleton-text.medium { width: 80%; }
+        .skeleton-text.full { width: 100%; }
+        
+        /* Section Labels */
+        .section-label {
+            text-align: center;
+            padding: 60px 20px 20px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        
+        /* Expanded Dynamic Island */
+        .di-expanded-content {
+            width: 100%;
+        }
+        
+        .di-expanded-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        
+        .di-expanded-title {
+            font-size: 15px;
+            font-weight: 600;
+        }
+        
+        .di-expanded-list {
+            font-size: 13px;
+        }
+        
+        .di-expanded-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 0;
+        }
+        
+        .di-expanded-item .status-icon {
+            font-size: 12px;
+        }
+        
+        .di-cta {
+            margin-top: 12px;
+            padding: 8px 16px;
+            background: var(--bg-quaternary);
+            border-radius: 20px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        /* Screen wrapper */
+        .screen-content {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding-top: 47px;
+        }
+        
+        /* Chart placeholder */
+        .mini-chart {
+            height: 60px;
+            margin-top: 8px;
+            background: linear-gradient(180deg, transparent 0%, rgba(48, 209, 88, 0.1) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .mini-chart svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .mini-chart path {
+            fill: none;
+            stroke: var(--accent-green);
+            stroke-width: 2;
+        }
+        
+        .mini-chart .fill {
+            fill: url(#gradient);
+            stroke: none;
+        }
+        
+        /* Ghost Card Styles */
+        .ghost-card {
+            background: rgba(255, 214, 10, 0.05);
+            border: 2px dashed rgba(255, 214, 10, 0.5);
+            border-radius: 16px;
+            padding: 14px;
+            animation: ghostPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes ghostPulse {
+            0%, 100% { opacity: 1; border-color: rgba(255, 214, 10, 0.5); }
+            50% { opacity: 0.85; border-color: rgba(255, 214, 10, 0.8); }
+        }
+        
+        .ghost-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .ghost-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px dashed var(--spawn-pink);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            background: rgba(255, 214, 10, 0.1);
+        }
+        
+        .ghost-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .ghost-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--spawn-pink);
+        }
+        
+        .ghost-role {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+        
+        .ghost-badge {
+            font-size: 14px;
+        }
+        
+        .ghost-alert {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--spawn-pink);
+            margin-bottom: 10px;
+        }
+        
+        .ghost-permissions {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 8px 10px;
+            margin-bottom: 10px;
+        }
+        
+        .permission-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 0;
+            font-size: 12px;
+        }
+        
+        .permission-icon {
+            font-size: 11px;
+        }
+        
+        .permission-icon.safe { opacity: 0.7; }
+        .permission-icon.warning { color: var(--spawn-pink); }
+        .permission-icon.danger { color: var(--accent-red); }
+        
+        .risk-badge {
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 5px;
+            border-radius: 4px;
+            background: rgba(255, 214, 10, 0.2);
+            color: var(--spawn-pink);
+            margin-left: auto;
+        }
+        
+        .risk-badge.high {
+            background: rgba(255, 69, 58, 0.2);
+            color: var(--accent-red);
+        }
+        
+        .ghost-reason {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        
+        .ghost-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 11px;
+            color: var(--text-tertiary);
+            margin-bottom: 12px;
+        }
+        
+        .ghost-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .ghost-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .ghost-btn.secondary {
+            background: var(--bg-quaternary);
+            color: var(--text-primary);
+        }
+        
+        .ghost-btn.primary {
+            background: var(--spawn-pink);
+            color: #000;
+        }
+        
+        /* Observability Panel */
+        .observability-panel {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 14px;
+        }
+        
+        .obs-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .obs-count {
+            font-weight: 500;
+            text-transform: none;
+        }
+        
+        .active-agent-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+            margin-bottom: 8px;
+        }
+        
+        .agent-line {
+            width: 3px;
+            height: 36px;
+            border-radius: 2px;
+        }
+        
+        .agent-row-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .agent-row-name {
+            font-size: 14px;
+            font-weight: 500;
+            display: block;
+        }
+        
+        .agent-row-task {
+            font-size: 11px;
+            color: var(--text-secondary);
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .agent-row-status {
+            text-align: right;
+        }
+        
+        .status-badge {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 3px 6px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        
+        .status-badge.working {
+            background: rgba(10, 132, 255, 0.2);
+            color: var(--accent-blue);
+        }
+        
+        .status-badge.success {
+            background: rgba(48, 209, 88, 0.2);
+            color: var(--accent-green);
+        }
+        
+        .agent-row-time {
+            font-size: 10px;
+            color: var(--text-tertiary);
+            display: block;
+            margin-top: 2px;
+        }
+        
+        .kill-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: transparent;
+            border: 1px solid var(--text-tertiary);
+            color: var(--text-tertiary);
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .kill-btn:hover {
+            background: rgba(255, 69, 58, 0.2);
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+        }
+        
+        .resource-meters {
+            display: flex;
+            gap: 12px;
+            margin: 12px 0;
+        }
+        
+        .resource-meter {
+            flex: 1;
+        }
+        
+        .meter-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+        
+        .meter-track {
+            height: 4px;
+            background: var(--bg-quaternary);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .meter-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        
+        .kill-all-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px;
+            background: rgba(255, 69, 58, 0.1);
+            border-radius: 10px;
+            color: var(--accent-red);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background: var(--bg-quaternary);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-blue);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        
+        .test-results {
+            margin-top: 8px;
+        }
+        
+        .test-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 0;
+            font-size: 12px;
+        }
+        
+        .test-icon {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+        
+        .test-icon.pass {
+            background: rgba(48, 209, 88, 0.2);
+            color: var(--accent-green);
+        }
+        
+        .test-icon.fail {
+            background: rgba(255, 69, 58, 0.2);
+            color: var(--accent-red);
+        }
+        
+        .test-time {
+            margin-left: auto;
+            color: var(--text-tertiary);
+            font-size: 11px;
+        }
+        
+        /* Settings List */
+        .settings-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 16px 34px;
+        }
+        
+        .settings-section {
+            margin-bottom: 24px;
+        }
+        
+        .settings-header {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            padding-left: 4px;
+        }
+        
+        /* Radio Group */
+        .radio-group {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .radio-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 14px;
+            border-bottom: 0.5px solid var(--separator);
+            cursor: pointer;
+        }
+        
+        .radio-item:last-child {
+            border-bottom: none;
+        }
+        
+        .radio-item.active {
+            background: rgba(10, 132, 255, 0.1);
+        }
+        
+        .radio-item.danger .radio-label {
+            color: var(--accent-red);
+        }
+        
+        .radio-circle {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 2px solid var(--text-tertiary);
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        
+        .radio-circle.checked {
+            border-color: var(--accent-blue);
+            background: var(--accent-blue);
+            position: relative;
+        }
+        
+        .radio-circle.checked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+        }
+        
+        .radio-label {
+            font-size: 16px;
+            font-weight: 500;
+            flex: 1;
+        }
+        
+        .radio-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-left: auto;
+            text-align: right;
+            max-width: 140px;
+        }
+        
+        /* Slider Setting */
+        .slider-setting {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .slider-value {
+            font-weight: 600;
+            color: var(--accent-blue);
+        }
+        
+        .slider-track {
+            height: 6px;
+            background: var(--bg-quaternary);
+            border-radius: 3px;
+            position: relative;
+        }
+        
+        .slider-fill {
+            height: 100%;
+            background: var(--accent-blue);
+            border-radius: 3px;
+        }
+        
+        .slider-thumb {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+        
+        /* Toggle Item */
+        .toggle-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-secondary);
+            padding: 12px 14px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .toggle-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .toggle-icon {
+            font-size: 18px;
+        }
+        
+        .toggle-label {
+            font-size: 15px;
+        }
+        
+        .toggle {
+            width: 51px;
+            height: 31px;
+            background: var(--bg-quaternary);
+            border-radius: 16px;
+            position: relative;
+            transition: background 0.2s;
+        }
+        
+        .toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 27px;
+            height: 27px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .toggle.checked {
+            background: var(--accent-green);
+        }
+        
+        .toggle.checked::after {
+            transform: translateX(20px);
+        }
+        
+        /* Input Setting */
+        .input-setting {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-secondary);
+            padding: 10px 14px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .input-label {
+            font-size: 15px;
+        }
+        
+        .stepper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .stepper-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--bg-quaternary);
+            border: none;
+            color: var(--accent-blue);
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .stepper-value {
+            min-width: 50px;
+            text-align: center;
+            font-size: 15px;
+            font-weight: 600;
+        }
+        
+        /* Summary Card */
+        .summary-card {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        
+        .summary-icon {
+            font-size: 24px;
+        }
+        
+        .summary-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .summary-stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 0.5px solid var(--separator);
+            margin-bottom: 12px;
+        }
+        
+        .summary-stat-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        .summary-stat-value {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .summary-section {
+            margin-bottom: 16px;
+        }
+        
+        .summary-section.queued {
+            background: rgba(255, 214, 10, 0.1);
+            margin: 0 -16px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+        }
+        
+        .summary-section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .queue-count {
+            background: var(--spawn-pink);
+            color: #000;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        
+        .summary-tree {
+            padding-left: 8px;
+        }
+        
+        .summary-tree-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 0;
+            font-size: 14px;
+        }
+        
+        .tree-icon {
+            font-size: 12px;
+        }
+        
+        .tree-icon.spawned { color: var(--accent-blue); }
+        .tree-icon.complete { color: var(--accent-green); }
+        .tree-icon.active { color: var(--spawn-pink); }
+        
+        .summary-meters {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .summary-meter-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+        
+        .queued-items {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .queued-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            border-radius: 8px;
+        }
+        
+        .queued-icon {
+            font-size: 18px;
+        }
+        
+        .queued-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .queued-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .queued-reason {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        .summary-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .summary-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .summary-btn.secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        
+        .summary-btn.primary {
+            background: var(--accent-blue);
+            color: white;
+        }
+        
+        /* Check-in Overlay */
+        .checkin-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            padding-top: 100px;
+        }
+        
+        .checkin-card {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 24px;
+            width: 100%;
+            max-width: 340px;
+            text-align: center;
+        }
+        
+        .checkin-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+        
+        .checkin-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        
+        .checkin-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+        
+        .checkin-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        
+        .checkin-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .checkin-stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--accent-blue);
+        }
+        
+        .checkin-stat-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+        
+        .checkin-pending {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: rgba(255, 214, 10, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: var(--spawn-pink);
+        }
+        
+        .checkin-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .checkin-btn {
+            flex: 1;
+            padding: 12px 8px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .checkin-btn.stop {
+            background: rgba(255, 69, 58, 0.2);
+            color: var(--accent-red);
+        }
+        
+        .checkin-btn.pause {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        
+        .checkin-btn.continue {
+            background: var(--accent-green);
+            color: white;
+        }
+        
+        .checkin-link {
+            margin-top: 16px;
+            font-size: 13px;
+            color: var(--accent-blue);
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="section-label">Spawn iOS Mockups</div>
+    
+    <div class="mockup-container">
+        <!-- Mockup 1: Main Conversation with Delegation -->
+        <div>
+            <h2 style="text-align: center; margin-bottom: 20px; color: var(--text-secondary); font-weight: 500;">Threaded Delegation View</h2>
+            <div class="iphone-frame">
+                <div class="iphone-screen">
+                    <div class="dynamic-island compact">
+                        <div class="di-icon">🤖</div>
+                        <div class="di-text">Trading...</div>
+                        <div class="di-progress"></div>
+                    </div>
+                    
+                    <div class="screen-content">
+                        <div class="nav-bar">
+                            <div class="nav-back">
+                                <span>‹</span> Back
+                            </div>
+                            <div class="nav-title">
+                                <h1>Finance Director</h1>
+                                <div class="status">
+                                    <div class="status-dot working"></div>
+                                    <span>Executing trade...</span>
+                                </div>
+                            </div>
+                            <div class="nav-action">⚙️</div>
+                        </div>
+                        
+                        <div class="message-list">
+                            <!-- User Message -->
+                            <div class="user-message">
+                                /rebalance portfolio
+                            </div>
+                            
+                            <!-- Main Agent Response -->
+                            <div class="agent-message">
+                                <div class="agent-avatar main">🤖</div>
+                                <div class="agent-content">
+                                    <div class="agent-header">
+                                        <span class="agent-name">Finance Director</span>
+                                        <span class="agent-time">10:02 AM</span>
+                                    </div>
+                                    <div class="agent-bubble">
+                                        I'll rebalance your crypto holdings. Starting analysis...
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Delegation Section -->
+                            <div class="delegation-section">
+                                <div class="delegation-header">
+                                    <svg viewBox="0 0 12 12" fill="currentColor">
+                                        <path d="M2 4l4 4 4-4"/>
+                                    </svg>
+                                    Delegating to 2 sub-agents...
+                                </div>
+                                
+                                <!-- Sub-agent 1: Market Analyzer -->
+                                <div class="sub-agent-message">
+                                    <div class="agent-avatar sub analyzer">📈</div>
+                                    <div class="sub-agent-content">
+                                        <div class="agent-header">
+                                            <span class="sub-agent-name">Market Analyzer</span>
+                                            <span class="sub-agent-time">10:02 AM</span>
+                                        </div>
+                                        <div class="sub-agent-bubble">
+                                            <div class="task-list">
+                                                <div class="task-item complete">
+                                                    <span class="icon">✓</span>
+                                                    Fetched prices for BTC, ETH, SOL
+                                                </div>
+                                                <div class="task-item complete">
+                                                    <span class="icon">✓</span>
+                                                    Calculated portfolio drift: 12%
+                                                </div>
+                                                <div class="task-item complete">
+                                                    <span class="icon">✓</span>
+                                                    Recommendation: Sell ETH, Buy BTC
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Sub-agent 2: Execution Bot -->
+                                <div class="sub-agent-message">
+                                    <div class="agent-avatar sub executor">⚡</div>
+                                    <div class="sub-agent-content">
+                                        <div class="agent-header">
+                                            <span class="sub-agent-name">Execution Bot</span>
+                                            <span class="sub-agent-time">10:03 AM</span>
+                                        </div>
+                                        <div class="sub-agent-bubble">
+                                            <div class="confirmation-card danger">
+                                                <div class="confirmation-header danger">
+                                                    ⚠️ CONFIRMATION REQUIRED
+                                                </div>
+                                                <div class="confirmation-details">
+                                                    <div class="detail-row">
+                                                        <span class="detail-label">Sell</span>
+                                                        <span class="detail-value">1.2 ETH</span>
+                                                    </div>
+                                                    <div class="detail-row">
+                                                        <span class="detail-label">Est. Value</span>
+                                                        <span class="detail-value">$3,840.00</span>
+                                                    </div>
+                                                    <div class="detail-row">
+                                                        <span class="detail-label">Buy</span>
+                                                        <span class="detail-value">0.089 BTC</span>
+                                                    </div>
+                                                </div>
+                                                <div class="confirmation-timer">
+                                                    ⏱️ Expires in 4:32
+                                                </div>
+                                                <div class="slide-confirm">
+                                                    <div class="slide-confirm-text">Slide to Execute</div>
+                                                    <div class="slide-confirm-thumb">››</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="input-bar">
+                            <input type="text" class="input-field" placeholder="Type a message...">
+                            <div class="send-btn">↑</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mockup 2: Sidebar Navigation -->
+        <div>
+            <h2 style="text-align: center; margin-bottom: 20px; color: var(--text-secondary); font-weight: 500;">Agent Sidebar (iPad/Mac)</h2>
+            <div class="sidebar-mockup">
+                <div class="sidebar-header">
+                    <h1>Agents</h1>
+                    <div class="sidebar-search">
+                        <span>🔍</span>
+                        <span>Search</span>
+                    </div>
+                </div>
+                
+                <div class="sidebar-content">
+                    <!-- Trading Bot Group -->
+                    <div class="agent-group">
+                        <div class="agent-group-header">
+                            <svg class="agent-group-icon" viewBox="0 0 12 12" fill="currentColor">
+                                <path d="M2 4l4 4 4-4"/>
+                            </svg>
+                            <div class="agent-avatar main" style="width: 28px; height: 28px; font-size: 14px; border-radius: 8px;">🤖</div>
+                            <span class="agent-group-name">Trading Bot</span>
+                            <div class="agent-group-status"></div>
+                        </div>
+                        
+                        <div class="sub-agent-list">
+                            <div class="sub-agent-item active">
+                                <div class="avatar analyzer">📈</div>
+                                <div class="info">
+                                    <div class="name">#eth-watcher</div>
+                                    <div class="desc">Monitoring ETH</div>
+                                </div>
+                                <div class="status-dot online"></div>
+                            </div>
+                            
+                            <div class="sub-agent-item">
+                                <div class="avatar" style="background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);">₿</div>
+                                <div class="info">
+                                    <div class="name">#btc-watcher</div>
+                                    <div class="desc">Monitoring BTC</div>
+                                </div>
+                                <div class="status-dot online"></div>
+                            </div>
+                            
+                            <div class="sub-agent-item">
+                                <div class="avatar risk">⚖️</div>
+                                <div class="info">
+                                    <div class="name">#risk-monitor</div>
+                                    <div class="desc">Portfolio risk</div>
+                                </div>
+                                <div class="status-dot working"></div>
+                            </div>
+                            
+                            <div class="sub-agent-item">
+                                <div class="avatar executor">⚡</div>
+                                <div class="info">
+                                    <div class="name">#executor</div>
+                                    <div class="desc">Trade execution</div>
+                                </div>
+                                <div class="status-dot paused"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Research Assistant -->
+                    <div class="agent-group">
+                        <div class="agent-group-header">
+                            <svg class="agent-group-icon" viewBox="0 0 12 12" fill="currentColor">
+                                <path d="M4 2l4 4-4 4"/>
+                            </svg>
+                            <div class="agent-avatar main" style="width: 28px; height: 28px; font-size: 14px; border-radius: 8px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">🔬</div>
+                            <span class="agent-group-name">Research Assistant</span>
+                            <div class="agent-group-status"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Code Reviewer -->
+                    <div class="agent-group">
+                        <div class="agent-group-header">
+                            <svg class="agent-group-icon" viewBox="0 0 12 12" fill="currentColor">
+                                <path d="M4 2l4 4-4 4"/>
+                            </svg>
+                            <div class="agent-avatar main" style="width: 28px; height: 28px; font-size: 14px; border-radius: 8px; background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);">💻</div>
+                            <span class="agent-group-name">Code Reviewer</span>
+                            <div class="status-dot paused"></div>
+                        </div>
+                    </div>
+                    
+                    <div style="height: 1px; background: var(--separator); margin: 20px 0;"></div>
+                    
+                    <div style="color: var(--text-secondary); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 8px 0;">Services</div>
+                    
+                    <div class="sub-agent-item">
+                        <div class="avatar" style="background: linear-gradient(135deg, #00c6fb 0%, #005bea 100%);">📊</div>
+                        <div class="info">
+                            <div class="name">MarketPulse Pro</div>
+                            <div class="desc">Real-time signals</div>
+                        </div>
+                        <div class="status-dot online"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mockup 3: Sub-agent Conversation -->
+        <div>
+            <h2 style="text-align: center; margin-bottom: 20px; color: var(--text-secondary); font-weight: 500;">Sub-Agent Chat</h2>
+            <div class="iphone-frame">
+                <div class="iphone-screen">
+                    <div class="dynamic-island compact">
+                        <div class="di-icon" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">📈</div>
+                        <div class="di-text">ETH Watcher</div>
+                        <div class="di-status"></div>
+                    </div>
+                    
+                    <div class="screen-content">
+                        <div class="nav-bar">
+                            <div class="nav-back">
+                                <span>‹</span> Trading Bot
+                            </div>
+                            <div class="nav-title">
+                                <h1>#eth-watcher</h1>
+                                <div class="status">
+                                    <div class="status-dot"></div>
+                                    <span>Online</span>
+                                </div>
+                            </div>
+                            <div class="nav-action">↑</div>
+                        </div>
+                        
+                        <div class="message-list">
+                            <!-- User Message -->
+                            <div class="user-message">
+                                how's eth doing?
+                            </div>
+                            
+                            <!-- Sub-agent Response with Card -->
+                            <div class="agent-message">
+                                <div class="agent-avatar sub analyzer">📈</div>
+                                <div class="agent-content">
+                                    <div class="agent-header">
+                                        <span class="agent-name">ETH Watcher</span>
+                                        <span class="agent-time">2:30 PM</span>
+                                    </div>
+                                    <div class="agent-bubble">
+                                        <div class="stat-card">
+                                            <div class="stat-card-header">
+                                                <span class="stat-card-title">Ethereum (ETH)</span>
+                                                <span class="stat-card-badge positive">▲ 5.2%</span>
+                                            </div>
+                                            <div class="stat-card-value">$3,412.50</div>
+                                            <div class="mini-chart">
+                                                <svg viewBox="0 0 200 60" preserveAspectRatio="none">
+                                                    <defs>
+                                                        <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                                            <stop offset="0%" style="stop-color:rgb(48, 209, 88);stop-opacity:0.3" />
+                                                            <stop offset="100%" style="stop-color:rgb(48, 209, 88);stop-opacity:0" />
+                                                        </linearGradient>
+                                                    </defs>
+                                                    <path class="fill" d="M0,50 L20,45 L40,48 L60,35 L80,38 L100,25 L120,28 L140,20 L160,22 L180,15 L200,10 L200,60 L0,60 Z"/>
+                                                    <path d="M0,50 L20,45 L40,48 L60,35 L80,38 L100,25 L120,28 L140,20 L160,22 L180,15 L200,10"/>
+                                                </svg>
+                                            </div>
+                                            <div class="stat-card-details">
+                                                <div class="stat-detail">
+                                                    <div class="stat-detail-label">24h Range</div>
+                                                    <div class="stat-detail-value">$3,050 – $3,420</div>
+                                                </div>
+                                                <div class="stat-detail">
+                                                    <div class="stat-detail-label">Volume</div>
+                                                    <div class="stat-detail-value">$12.4B</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- User Message -->
+                            <div class="user-message">
+                                alert me if it drops below 3200
+                            </div>
+                            
+                            <!-- Confirmation -->
+                            <div class="agent-message">
+                                <div class="agent-avatar sub analyzer">📈</div>
+                                <div class="agent-content">
+                                    <div class="agent-header">
+                                        <span class="agent-name">ETH Watcher</span>
+                                        <span class="agent-time">2:31 PM</span>
+                                    </div>
+                                    <div class="agent-bubble">
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            <span style="color: var(--accent-green);">✓</span>
+                                            <span>Alert set: ETH below $3,200</span>
+                                        </div>
+                                        <div style="margin-top: 8px; font-size: 13px; color: var(--text-secondary);">
+                                            I'll send you a push notification if the price drops.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- User Message -->
+                            <div class="user-message">
+                                what's my position?
+                            </div>
+                            
+                            <!-- Position Card -->
+                            <div class="agent-message">
+                                <div class="agent-avatar sub analyzer">📈</div>
+                                <div class="agent-content">
+                                    <div class="agent-header">
+                                        <span class="agent-name">ETH Watcher</span>
+                                        <span class="agent-time">2:32 PM</span>
+                                    </div>
+                                    <div class="agent-bubble">
+                                        <div class="stat-card">
+                                            <div class="stat-card-header">
+                                                <span class="stat-card-title">Your ETH Position</span>
+                                                <span class="stat-card-badge positive">+$427.50</span>
+                                            </div>
+                                            <div class="stat-card-value">2.5 ETH</div>
+                                            <div class="stat-card-details">
+                                                <div class="stat-detail">
+                                                    <div class="stat-detail-label">Value</div>
+                                                    <div class="stat-detail-value">$8,531.25</div>
+                                                </div>
+                                                <div class="stat-detail">
+                                                    <div class="stat-detail-label">Avg. Entry</div>
+                                                    <div class="stat-detail-value">$3,241.50</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-secondary">Add More</button>
+                                            <button class="btn btn-primary">Sell</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="input-bar">
+                            <input type="text" class="input-field" placeholder="Message ETH Watcher...">
+                            <div class="send-btn">↑</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Dynamic Island Expanded Mockup -->
+    <div class="section-label" style="margin-top: 40px;">Dynamic Island States</div>
+    
+    <div class="mockup-container">
+        <div style="display: flex; flex-direction: column; gap: 30px; align-items: center;">
+            <div>
+                <h2 style="text-align: center; margin-bottom: 15px; color: var(--text-secondary); font-weight: 500; font-size: 14px;">Compact (Background)</h2>
+                <div class="dynamic-island compact" style="position: relative; transform: none; left: auto;">
+                    <div class="di-icon">🤖</div>
+                    <div class="di-text">Trading...</div>
+                    <div class="di-progress"></div>
+                </div>
+            </div>
+            
+            <div>
+                <h2 style="text-align: center; margin-bottom: 15px; color: var(--text-secondary); font-weight: 500; font-size: 14px;">Expanded (Long Press)</h2>
+                <div class="dynamic-island expanded" style="position: relative; transform: none; left: auto;">
+                    <div class="di-expanded-content">
+                        <div class="di-expanded-header">
+                            <div class="di-icon">🤖</div>
+                            <span class="di-expanded-title">Trading Bot</span>
+                        </div>
+                        <div class="di-expanded-list">
+                            <div class="di-expanded-item">
+                                <span class="status-icon" style="color: var(--accent-green);">✓</span>
+                                <span>Market Analyzer (done)</span>
+                            </div>
+                            <div class="di-expanded-item">
+                                <span class="status-icon" style="color: var(--spawn-pink);">⏳</span>
+                                <span>Execution Bot (waiting)</span>
+                            </div>
+                            <div class="di-expanded-item">
+                                <span class="status-icon" style="color: var(--accent-red);">⚠️</span>
+                                <span>Needs confirmation</span>
+                            </div>
+                        </div>
+                        <div class="di-cta">Tap to open</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Skeleton Loading State -->
+        <div>
+            <h2 style="text-align: center; margin-bottom: 15px; color: var(--text-secondary); font-weight: 500; font-size: 14px;">Loading State (Spawning Sub-Agent)</h2>
+            <div style="background: var(--bg-primary); padding: 20px; border-radius: 16px; width: 360px;">
+                <div class="delegation-section" style="margin-left: 0;">
+                    <div class="sub-agent-message" style="padding-left: 20px;">
+                        <div class="agent-avatar sub" style="background: var(--bg-tertiary);">
+                            <div class="skeleton" style="width: 100%; height: 100%; border-radius: 50%;"></div>
+                        </div>
+                        <div class="sub-agent-content" style="flex: 1;">
+                            <div class="sub-agent-bubble" style="background: var(--bg-tertiary);">
+                                <div class="skeleton skeleton-text short"></div>
+                                <div class="skeleton skeleton-text full"></div>
+                                <div class="skeleton skeleton-text medium"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 12px; font-size: 12px; color: var(--text-tertiary);">
+                    Spawning new sub-agent...
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Confirmation Variants -->
+    <div class="section-label" style="margin-top: 40px;">Auto-Spawn Mode</div>
+    
+    <div class="mockup-container">
+        <!-- Auto-Spawn Settings -->
+        <div>
+            <h2 style="text-align: center; margin-bottom: 20px; color: var(--text-secondary); font-weight: 500;">Auto-Spawn Settings</h2>
+            <div class="iphone-frame">
+                <div class="iphone-screen">
+                    <div class="screen-content">
+                        <div class="nav-bar">
+                            <div class="nav-back">
+                                <span>‹</span> Settings
+                            </div>
+                            <div class="nav-title">
+                                <h1>Auto-Spawn</h1>
+                            </div>
+                            <div class="nav-action" style="font-size: 16px;">?</div>
+                        </div>
+                        
+                        <div class="settings-list">
+                            <!-- Mode Selection -->
+                            <div class="settings-section">
+                                <div class="settings-header">AUTO-SPAWN MODE</div>
+                                
+                                <div class="radio-group">
+                                    <label class="radio-item">
+                                        <span class="radio-circle"></span>
+                                        <span class="radio-label">Off</span>
+                                        <span class="radio-desc">Require approval for all spawns</span>
+                                    </label>
+                                    <label class="radio-item">
+                                        <span class="radio-circle"></span>
+                                        <span class="radio-label">Queue</span>
+                                        <span class="radio-desc">Batch spawns for review</span>
+                                    </label>
+                                    <label class="radio-item active">
+                                        <span class="radio-circle checked"></span>
+                                        <span class="radio-label">Constrained</span>
+                                        <span class="radio-desc">Auto-approve within limits</span>
+                                    </label>
+                                    <label class="radio-item">
+                                        <span class="radio-circle"></span>
+                                        <span class="radio-label">Trusted</span>
+                                        <span class="radio-desc">Auto-approve from trusted agents</span>
+                                    </label>
+                                    <label class="radio-item danger">
+                                        <span class="radio-circle"></span>
+                                        <span class="radio-label">Unrestricted ⚠️</span>
+                                        <span class="radio-desc">Auto-approve everything</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Resource Limits -->
+                            <div class="settings-section">
+                                <div class="settings-header">RESOURCE LIMITS</div>
+                                
+                                <div class="slider-setting">
+                                    <div class="slider-label">
+                                        <span>Max concurrent sub-agents</span>
+                                        <span class="slider-value">5</span>
+                                    </div>
+                                    <div class="slider-track">
+                                        <div class="slider-fill" style="width: 50%;"></div>
+                                        <div class="slider-thumb" style="left: 50%;"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="slider-setting">
+                                    <div class="slider-label">
+                                        <span>Max spawns per hour</span>
+                                        <span class="slider-value">10</span>
+                                    </div>
+                                    <div class="slider-track">
+                                        <div class="slider-fill" style="width: 33%;"></div>
+                                        <div class="slider-thumb" style="left: 33%;"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="slider-setting">
+                                    <div class="slider-label">
+                                        <span>Token budget per sub-agent</span>
+                                        <span class="slider-value">50k</span>
+                                    </div>
+                                    <div class="slider-track">
+                                        <div class="slider-fill" style="width: 50%;"></div>
+                                        <div class="slider-thumb" style="left: 50%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Forbidden Permissions -->
+                            <div class="settings-section">
+                                <div class="settings-header">ALWAYS REQUIRE APPROVAL</div>
+                                
+                                <div class="toggle-item">
+                                    <div class="toggle-info">
+                                        <span class="toggle-icon">🐚</span>
+                                        <span class="toggle-label">Shell access</span>
+                                    </div>
+                                    <div class="toggle checked"></div>
+                                </div>
+                                
+                                <div class="toggle-item">
+                                    <div class="toggle-info">
+                                        <span class="toggle-icon">🗑️</span>
+                                        <span class="toggle-label">Delete files</span>
+                                    </div>
+                                    <div class="toggle checked"></div>
+                                </div>
+                                
+                                <div class="toggle-item">
+                                    <div class="toggle-info">
+                                        <span class="toggle-icon">🔄</span>
+                                        <span class="toggle-label">Recursive spawning</span>
+                                    </div>
+                                    <div class="toggle checked"></div>
+                                </div>
+                                
+                                <div class="toggle-item">
+                                    <div class="toggle-info">
+                                        <span class="toggle-icon">🌐</span>
+                                        <span class="toggle-label">Open network ports</span>
+                                    </div>
+                                    <div class="toggle checked"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Circuit Breakers -->
+                            <div class="settings-section">
+                                <div class="settings-header">CIRCUIT BREAKERS</div>
+                                
+                                <div class="input-setting">
+                                    <span class="input-label">Pause after errors</span>
+                                    <div class="stepper">
+                                        <button class="stepper-btn">−</button>
+                                        <span class="stepper-value">3</span>
+                                        <button class="stepper-btn">+</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="input-setting">
+                                    <span class="input-label">Pause at budget %</span>
+                                    <div class="stepper">
+                                        <button class="stepper-btn">−</button>
+                                        <span class="stepper-value">80%</span>
+                                        <button class="stepper-btn">+</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="input-setting">
+                                    <span class="input-label">Require check-in after</span>
+                                    <div class="stepper">
+                                        <button class="stepper-btn">−</button>
+                                        <span class="stepper-value">4 hrs</span>
+                                        <button class="stepper-btn">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Morning Summary -->
+        <div>
+            <h2 style="text-align: center; margin-bottom: 20px; color: var(--text-secondary); font-weight: 500;">Morning Summary</h2>
+            <div class="iphone-frame">
+                <div class="iphone-screen">
+                    <div class="screen-content">
+                        <div class="nav-bar">
+                            <div class="nav-back">
+                                <span>‹</span> Agents
+                            </div>
+                            <div class="nav-title">
+                                <h1>Clawdbot</h1>
+                                <div class="status">
+                                    <div class="status-dot"></div>
+                                    <span>Online</span>
+                                </div>
+                            </div>
+                            <div class="nav-action">⚙️</div>
+                        </div>
+                        
+                        <div class="message-list">
+                            <!-- Morning Summary Card -->
+                            <div class="summary-card">
+                                <div class="summary-header">
+                                    <span class="summary-icon">☀️</span>
+                                    <span class="summary-title">Overnight Summary</span>
+                                </div>
+                                
+                                <div class="summary-stat-row">
+                                    <span class="summary-stat-label">Session Duration</span>
+                                    <span class="summary-stat-value">6h 23m</span>
+                                </div>
+                                
+                                <div class="summary-section">
+                                    <div class="summary-section-title">Sub-Agents</div>
+                                    <div class="summary-tree">
+                                        <div class="summary-tree-item">
+                                            <span class="tree-icon spawned">↗</span>
+                                            <span>8 spawned</span>
+                                        </div>
+                                        <div class="summary-tree-item">
+                                            <span class="tree-icon complete">✓</span>
+                                            <span>7 completed</span>
+                                        </div>
+                                        <div class="summary-tree-item">
+                                            <span class="tree-icon active">◐</span>
+                                            <span>1 still active</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="summary-section">
+                                    <div class="summary-section-title">Resources Used</div>
+                                    <div class="summary-meters">
+                                        <div class="summary-meter">
+                                            <div class="summary-meter-header">
+                                                <span>Tokens</span>
+                                                <span>342k / 500k</span>
+                                            </div>
+                                            <div class="meter-track">
+                                                <div class="meter-fill" style="width: 68%; background: var(--accent-blue);"></div>
+                                            </div>
+                                        </div>
+                                        <div class="summary-meter">
+                                            <div class="summary-meter-header">
+                                                <span>Tool Calls</span>
+                                                <span>891</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="summary-section queued">
+                                    <div class="summary-section-title">
+                                        <span>⏸️ Queued (need approval)</span>
+                                        <span class="queue-count">2</span>
+                                    </div>
+                                    <div class="queued-items">
+                                        <div class="queued-item">
+                                            <span class="queued-icon">🚀</span>
+                                            <div class="queued-info">
+                                                <span class="queued-name">DeployBot</span>
+                                                <span class="queued-reason">wants docker access</span>
+                                            </div>
+                                        </div>
+                                        <div class="queued-item">
+                                            <span class="queued-icon">🧹</span>
+                                            <div class="queued-info">
+                                                <span class="queued-name">CleanupBot</span>
+                                                <span class="queued-reason">wants delete access</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="summary-actions">
+                                    <button class="summary-btn secondary">View Full Log</button>
+                                    <button class="summary-btn primary">Review Queued</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Check-in Request -->
+                            <div class="agent-message">
+                                <div class="agent-avatar main" style="background: linear-gradient(135deg, #ff2d92 0%, #ff6b6b 100%);">🤖</div>
+                                <div class="agent-content">
+                                    <div class="agent-header">
+                                        <span class="agent-name">Clawdbot</span>
+                                        <span class="agent-time">7:02 AM</span>
+                                    </div>
+                                    <div class="agent-bubble">
+                                        <div style="margin-bottom: 10px;">Good morning! I've completed the main refactoring work. Here's what's left:</div>
+                                        
+                                        <div class="task-list">
+                                            <div class="task-item complete">
+                                                <span class="icon">✓</span>
+                                                Converted 12 Flask routes to FastAPI
+                                            </div>
+                                            <div class="task-item complete">
+                                                <span class="icon">✓</span>
+                                                Updated all imports
+                                            </div>
+                                            <div class="task-item complete">
+                                                <span class="icon">✓</span>
+                                                Tests passing (47/47)
+                                            </div>
+                                            <div class="task-item pending">
+                                                <span class="icon" style="color: var(--spawn-pink);">○</span>
+                                                Deploy to staging (needs approval)
+                                            </div>
+                                        </div>
+                                        
+                                        <div style="margin-top: 12px; font-size: 13px; color: var(--text-secondary);">
+                                            Should I continue with deployment?
+                                        </div>
+                                        
+                                        <div class="action-buttons" style="margin-top: 12px;">
+                                            <button class="btn btn-secondary">View Changes</button>
+                                            <button class="btn btn-primary">Continue</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="input-bar">
+                            <input type="text" class="input-field" placeholder="Type a message...">
+                            <div class="send-btn">↑</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Check-in Request -->
+        <div>
+            <h2 style="text-align: center; margin-bottom: 20px; color: var(--text-secondary); font-weight: 500;">Check-in Request</h2>
+            <div class="iphone-frame">
+                <div class="iphone-screen">
+                    <div class="dynamic-island expanded" style="position: absolute; transform: translateX(-50%); width: 350px;">
+                        <div class="di-expanded-content">
+                            <div class="di-expanded-header">
+                                <div class="di-icon" style="background: linear-gradient(135deg, #ff2d92 0%, #ff6b6b 100%);">🤖</div>
+                                <span class="di-expanded-title">Check-in Required</span>
+                            </div>
+                            <div style="font-size: 13px; color: var(--text-secondary); margin: 8px 0;">
+                                Clawdbot has been working for 4 hours
+                            </div>
+                            <div class="di-expanded-list">
+                                <div class="di-expanded-item">
+                                    <span>7 sub-agents spawned</span>
+                                </div>
+                                <div class="di-expanded-item">
+                                    <span>234k tokens used</span>
+                                </div>
+                                <div class="di-expanded-item">
+                                    <span>2 spawns pending approval</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 8px; margin-top: 12px;">
+                                <div class="di-cta" style="flex: 1; background: var(--bg-quaternary);">Pause</div>
+                                <div class="di-cta" style="flex: 1;">Continue</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="screen-content">
+                        <div class="checkin-overlay">
+                            <div class="checkin-card">
+                                <div class="checkin-icon">⏰</div>
+                                <div class="checkin-title">Check-in Required</div>
+                                <div class="checkin-subtitle">Clawdbot has been working for 4 hours</div>
+                                
+                                <div class="checkin-stats">
+                                    <div class="checkin-stat">
+                                        <span class="checkin-stat-value">7</span>
+                                        <span class="checkin-stat-label">Sub-agents spawned</span>
+                                    </div>
+                                    <div class="checkin-stat">
+                                        <span class="checkin-stat-value">234k</span>
+                                        <span class="checkin-stat-label">Tokens used</span>
+                                    </div>
+                                    <div class="checkin-stat">
+                                        <span class="checkin-stat-value">0</span>
+                                        <span class="checkin-stat-label">Errors</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="checkin-pending">
+                                    <span class="checkin-pending-icon">⏸️</span>
+                                    <span>2 spawn requests waiting for approval</span>
+                                </div>
+                                
+                                <div class="checkin-actions">
+                                    <button class="checkin-btn stop">Stop All</button>
+                                    <button class="checkin-btn pause">Pause</button>
+                                    <button class="checkin-btn continue">Continue 4h</button>
+                                </div>
+                                
+                                <div class="checkin-link">View detailed activity log</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="section-label" style="margin-top: 40px;">Spawn Request (Ghost Agents)</div>
+    
+    <div class="mockup-container">
+        <!-- Ghost Agent Spawn Request -->
+        <div>
+            <h2 style="text-align: center; margin-bottom: 20px; color: var(--text-secondary); font-weight: 500;">Autonomous Spawn Request</h2>
+            <div class="iphone-frame">
+                <div class="iphone-screen">
+                    <div class="dynamic-island compact">
+                        <div class="di-icon" style="background: linear-gradient(135deg, #ff2d92 0%, #ff6b6b 100%);">🤖</div>
+                        <div class="di-text">Clawdbot</div>
+                        <div class="di-status" style="background: var(--spawn-pink);"></div>
+                    </div>
+                    
+                    <div class="screen-content">
+                        <div class="nav-bar">
+                            <div class="nav-back">
+                                <span>‹</span> Back
+                            </div>
+                            <div class="nav-title">
+                                <h1>Clawdbot</h1>
+                                <div class="status">
+                                    <div class="status-dot working" style="background: var(--spawn-pink);"></div>
+                                    <span>Planning refactor...</span>
+                                </div>
+                            </div>
+                            <div class="nav-action">⚙️</div>
+                        </div>
+                        
+                        <div class="message-list">
+                            <!-- User Message -->
+                            <div class="user-message">
+                                Refactor the entire backend to use FastAPI
+                            </div>
+                            
+                            <!-- Main Agent Response -->
+                            <div class="agent-message">
+                                <div class="agent-avatar main" style="background: linear-gradient(135deg, #ff2d92 0%, #ff6b6b 100%);">🤖</div>
+                                <div class="agent-content">
+                                    <div class="agent-header">
+                                        <span class="agent-name">Clawdbot</span>
+                                        <span class="agent-time">3:42 PM</span>
+                                    </div>
+                                    <div class="agent-bubble">
+                                        This is a large task. I'll need to split it into parallel workstreams. Requesting permission to spawn sub-agents...
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Ghost Agent 1 -->
+                            <div class="delegation-section">
+                                <div class="sub-agent-message">
+                                    <div class="ghost-card">
+                                        <div class="ghost-header">
+                                            <div class="ghost-avatar">
+                                                <span>✍️</span>
+                                            </div>
+                                            <div class="ghost-info">
+                                                <span class="ghost-name">CodeRewriter</span>
+                                                <span class="ghost-role">Refactoring Engineer</span>
+                                            </div>
+                                            <span class="ghost-badge">⚡️</span>
+                                        </div>
+                                        
+                                        <div class="ghost-alert">
+                                            ⚠️ SPAWN REQUEST
+                                        </div>
+                                        
+                                        <div class="ghost-permissions">
+                                            <div class="permission-item">
+                                                <span class="permission-icon safe">📁</span>
+                                                <span>Read: /backend/**</span>
+                                            </div>
+                                            <div class="permission-item">
+                                                <span class="permission-icon warning">📝</span>
+                                                <span>Write: /backend/**</span>
+                                                <span class="risk-badge">MED</span>
+                                            </div>
+                                            <div class="permission-item">
+                                                <span class="permission-icon safe">💬</span>
+                                                <span>Message: parent</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="ghost-reason">
+                                            "I'll rewrite Flask routes to FastAPI endpoints while preserving business logic."
+                                        </div>
+                                        
+                                        <div class="ghost-meta">
+                                            <span>⏱️ Task-bound</span>
+                                            <span>~15-20 min</span>
+                                        </div>
+                                        
+                                        <div class="ghost-actions">
+                                            <button class="ghost-btn secondary">Reject</button>
+                                            <button class="ghost-btn primary">Approve</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Ghost Agent 2 -->
+                                <div class="sub-agent-message">
+                                    <div class="ghost-card">
+                                        <div class="ghost-header">
+                                            <div class="ghost-avatar" style="border-color: #30d158;">
+                                                <span>🐞</span>
+                                            </div>
+                                            <div class="ghost-info">
+                                                <span class="ghost-name">TestRunner_01</span>
+                                                <span class="ghost-role">QA Engineer</span>
+                                            </div>
+                                            <span class="ghost-badge">⚡️</span>
+                                        </div>
+                                        
+                                        <div class="ghost-alert">
+                                            ⚠️ SPAWN REQUEST
+                                        </div>
+                                        
+                                        <div class="ghost-permissions">
+                                            <div class="permission-item">
+                                                <span class="permission-icon safe">📁</span>
+                                                <span>Read: /tests/**</span>
+                                            </div>
+                                            <div class="permission-item">
+                                                <span class="permission-icon warning">⚙️</span>
+                                                <span>Execute: pytest</span>
+                                                <span class="risk-badge">MED</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="ghost-reason">
+                                            "I'll run tests in parallel while CodeRewriter works, catching breaks early."
+                                        </div>
+                                        
+                                        <div class="ghost-meta">
+                                            <span>⏱️ Task-bound</span>
+                                            <span>~10-15 min</span>
+                                        </div>
+                                        
+                                        <div class="ghost-actions">
+                                            <button class="ghost-btn secondary">Reject</button>
+                                            <button class="ghost-btn primary">Approve</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="input-bar">
+                            <input type="text" class="input-field" placeholder="Type a message...">
+                            <div class="send-btn">↑</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Active Sub-Agents with Kill Switch -->
+        <div>
+            <h2 style="text-align: center; margin-bottom: 20px; color: var(--text-secondary); font-weight: 500;">Active Sub-Agents (Observability)</h2>
+            <div class="iphone-frame">
+                <div class="iphone-screen">
+                    <div class="dynamic-island expanded" style="position: absolute; transform: translateX(-50%); width: 350px;">
+                        <div class="di-expanded-content">
+                            <div class="di-expanded-header">
+                                <div class="di-icon" style="background: linear-gradient(135deg, #ff2d92 0%, #ff6b6b 100%);">🤖</div>
+                                <span class="di-expanded-title">Clawdbot</span>
+                                <span style="font-size: 12px; color: var(--accent-green);">● Active</span>
+                            </div>
+                            <div class="di-expanded-list">
+                                <div class="di-expanded-item">
+                                    <span class="status-icon" style="color: var(--accent-blue);">◐</span>
+                                    <span>CodeRewriter (working)</span>
+                                </div>
+                                <div class="di-expanded-item">
+                                    <span class="status-icon" style="color: var(--accent-green);">✓</span>
+                                    <span>TestRunner_01 (8 passed)</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 8px; margin-top: 12px;">
+                                <div class="di-cta" style="flex: 1;">Open App</div>
+                                <div class="di-cta" style="background: rgba(255,69,58,0.2); color: var(--accent-red);">Kill All</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="screen-content">
+                        <div class="nav-bar" style="margin-top: 80px;">
+                            <div class="nav-back">
+                                <span>‹</span> Back
+                            </div>
+                            <div class="nav-title">
+                                <h1>Clawdbot</h1>
+                                <div class="status">
+                                    <div class="status-dot working"></div>
+                                    <span>2 sub-agents active</span>
+                                </div>
+                            </div>
+                            <div class="nav-action">⚙️</div>
+                        </div>
+                        
+                        <div class="message-list">
+                            <!-- Observability Panel -->
+                            <div class="observability-panel">
+                                <div class="obs-header">
+                                    <span>ACTIVE SUB-AGENTS</span>
+                                    <span class="obs-count">2 running</span>
+                                </div>
+                                
+                                <div class="active-agent-row">
+                                    <div class="agent-line" style="background: var(--accent-blue);"></div>
+                                    <div class="agent-avatar sub" style="background: linear-gradient(135deg, #0a84ff 0%, #5e5ce6 100%);">✍️</div>
+                                    <div class="agent-row-info">
+                                        <span class="agent-row-name">CodeRewriter</span>
+                                        <span class="agent-row-task">Rewriting auth.py (3/12 files)</span>
+                                    </div>
+                                    <div class="agent-row-status">
+                                        <span class="status-badge working">Working</span>
+                                        <span class="agent-row-time">4:23</span>
+                                    </div>
+                                    <button class="kill-btn">✕</button>
+                                </div>
+                                
+                                <div class="active-agent-row">
+                                    <div class="agent-line" style="background: var(--accent-green);"></div>
+                                    <div class="agent-avatar sub" style="background: linear-gradient(135deg, #30d158 0%, #34c759 100%);">🐞</div>
+                                    <div class="agent-row-info">
+                                        <span class="agent-row-name">TestRunner_01</span>
+                                        <span class="agent-row-task">8 passed, 0 failed</span>
+                                    </div>
+                                    <div class="agent-row-status">
+                                        <span class="status-badge success">Passing</span>
+                                        <span class="agent-row-time">2:15</span>
+                                    </div>
+                                    <button class="kill-btn">✕</button>
+                                </div>
+                                
+                                <div class="resource-meters">
+                                    <div class="resource-meter">
+                                        <div class="meter-label">
+                                            <span>Tokens</span>
+                                            <span>32k / 100k</span>
+                                        </div>
+                                        <div class="meter-track">
+                                            <div class="meter-fill" style="width: 32%; background: var(--accent-blue);"></div>
+                                        </div>
+                                    </div>
+                                    <div class="resource-meter">
+                                        <div class="meter-label">
+                                            <span>Tool Calls</span>
+                                            <span>47 / 200</span>
+                                        </div>
+                                        <div class="meter-track">
+                                            <div class="meter-fill" style="width: 23%; background: var(--accent-green);"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="kill-all-btn">
+                                    <span>⚠️</span> Kill All Sub-Agents
+                                </div>
+                            </div>
+                            
+                            <!-- Recent Activity -->
+                            <div class="agent-message" style="margin-top: 16px;">
+                                <div class="agent-avatar main" style="background: linear-gradient(135deg, #ff2d92 0%, #ff6b6b 100%);">🤖</div>
+                                <div class="agent-content">
+                                    <div class="agent-header">
+                                        <span class="agent-name">Clawdbot</span>
+                                        <span class="agent-time">3:45 PM</span>
+                                    </div>
+                                    <div class="agent-bubble">
+                                        <div style="font-size: 14px; margin-bottom: 8px;">Refactoring in progress...</div>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 25%;"></div>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-secondary); margin-top: 6px;">
+                                            <span>3 of 12 files</span>
+                                            <span>~12 min remaining</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Sub-agent update -->
+                            <div class="delegation-section">
+                                <div class="sub-agent-message">
+                                    <div class="agent-avatar sub" style="background: linear-gradient(135deg, #30d158 0%, #34c759 100%);">🐞</div>
+                                    <div class="sub-agent-content">
+                                        <div class="agent-header">
+                                            <span class="sub-agent-name">TestRunner_01</span>
+                                            <span class="sub-agent-time">3:47 PM</span>
+                                        </div>
+                                        <div class="sub-agent-bubble">
+                                            <div style="display: flex; align-items: center; gap: 6px; color: var(--accent-green);">
+                                                <span>✓</span>
+                                                <span style="font-weight: 500;">All tests passing</span>
+                                            </div>
+                                            <div class="test-results">
+                                                <div class="test-row">
+                                                    <span class="test-icon pass">✓</span>
+                                                    <span>test_auth.py</span>
+                                                    <span class="test-time">0.3s</span>
+                                                </div>
+                                                <div class="test-row">
+                                                    <span class="test-icon pass">✓</span>
+                                                    <span>test_users.py</span>
+                                                    <span class="test-time">0.5s</span>
+                                                </div>
+                                                <div class="test-row">
+                                                    <span class="test-icon pass">✓</span>
+                                                    <span>test_api.py</span>
+                                                    <span class="test-time">1.2s</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="input-bar">
+                            <input type="text" class="input-field" placeholder="Type a message...">
+                            <div class="send-btn">↑</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Confirmation Variants -->
+    <div class="section-label" style="margin-top: 40px;">Confirmation Card Variants</div>
+    
+    <div class="mockup-container">
+        <!-- Low Danger -->
+        <div style="width: 340px;">
+            <h2 style="text-align: center; margin-bottom: 15px; color: var(--text-secondary); font-weight: 500; font-size: 14px;">Low Stakes (Tap to Confirm)</h2>
+            <div style="background: var(--bg-secondary); padding: 16px; border-radius: 16px;">
+                <div class="confirmation-card" style="border-color: var(--accent-blue);">
+                    <div class="confirmation-header" style="color: var(--accent-blue);">
+                        ℹ️ CONFIRMATION
+                    </div>
+                    <div style="font-size: 15px; margin-bottom: 12px;">
+                        Set price alert for ETH at $3,500?
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-secondary">Cancel</button>
+                        <button class="btn btn-primary">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Medium Danger -->
+        <div style="width: 340px;">
+            <h2 style="text-align: center; margin-bottom: 15px; color: var(--text-secondary); font-weight: 500; font-size: 14px;">Medium Stakes (Yellow)</h2>
+            <div style="background: var(--bg-secondary); padding: 16px; border-radius: 16px;">
+                <div class="confirmation-card">
+                    <div class="confirmation-header warning">
+                        ⚠️ CONFIRMATION REQUIRED
+                    </div>
+                    <div class="confirmation-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Action</span>
+                            <span class="detail-value">Buy</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Asset</span>
+                            <span class="detail-value">0.1 ETH</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Value</span>
+                            <span class="detail-value">$341.25</span>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-secondary">Cancel</button>
+                        <button class="btn btn-primary">Approve</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Critical (Biometric) -->
+        <div style="width: 340px;">
+            <h2 style="text-align: center; margin-bottom: 15px; color: var(--text-secondary); font-weight: 500; font-size: 14px;">Critical (Face ID Required)</h2>
+            <div style="background: var(--bg-secondary); padding: 16px; border-radius: 16px;">
+                <div class="confirmation-card danger">
+                    <div class="confirmation-header danger">
+                        🔴 CRITICAL TRADE
+                    </div>
+                    <div class="confirmation-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Action</span>
+                            <span class="detail-value">Sell All</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Asset</span>
+                            <span class="detail-value">10.5 ETH</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Value</span>
+                            <span class="detail-value">$35,831.25</span>
+                        </div>
+                    </div>
+                    <div class="confirmation-timer">
+                        ⏱️ Expires in 2:00
+                    </div>
+                    <button class="btn btn-danger" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <span style="font-size: 20px;">👤</span>
+                        Authenticate to Confirm
+                    </button>
+                    <button class="btn btn-secondary" style="width: 100%; margin-top: 8px;">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

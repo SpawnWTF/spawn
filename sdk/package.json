@@ -1,0 +1,59 @@
+{
+  "name": "@spawn/agent-sdk",
+  "version": "1.0.0",
+  "description": "Spawn.wtf Agent SDK - Connect AI agents to the mobile app",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc -w",
+    "test": "tsx test/test.ts",
+    "skill:test": "node bin/cli.js --help"
+  },
+  "keywords": [
+    "spawn",
+    "agent",
+    "ai",
+    "websocket",
+    "sdk",
+    "clawdbot",
+    "claude",
+    "llm",
+    "automation"
+  ],
+  "author": "Spawn",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/spawnwtf/skill.git"
+  },
+  "homepage": "https://spawn.wtf",
+  "bugs": {
+    "url": "https://github.com/spawnwtf/skill/issues"
+  },
+  "bin": {
+    "spawn-skill": "./bin/cli.js"
+  },
+  "files": [
+    "dist/",
+    "bin/",
+    "templates/",
+    "README.md"
+  ],
+  "dependencies": {
+    "ws": "^8.16.0",
+    "chalk": "^5.3.0",
+    "enquirer": "^2.4.1",
+    "fs-extra": "^11.2.0",
+    "ora": "^8.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/ws": "^8.5.10",
+    "typescript": "^5.3.3",
+    "tsx": "^4.7.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

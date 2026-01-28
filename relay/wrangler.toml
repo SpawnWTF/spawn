@@ -1,0 +1,32 @@
+name = "spawn-relay"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Durable Objects for WebSocket rooms
+[durable_objects]
+bindings = [
+  { name = "AGENT_ROOM", class_name = "AgentRoom" }
+]
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["AgentRoom"]
+
+# KV Namespace for tokens
+[[kv_namespaces]]
+binding = "TOKENS"
+id = "25f6dd25eea943d79a703ba06c9479d0"
+
+# Environment variables
+[vars]
+ENVIRONMENT = "production"
+
+# Development
+[dev]
+port = 8787
+local_protocol = "http"
+
+# Production secrets (set via wrangler secret put)
+# ADMIN_API_KEY - for creating agents
+# PUSH_TOKEN - for sending push notifications

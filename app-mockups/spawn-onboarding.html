@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spawn - Connect Agent Flow</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #1c1c1e;
+            --bg-tertiary: #2c2c2e;
+            --bg-quaternary: #3a3a3c;
+            --text-primary: #ffffff;
+            --text-secondary: #8e8e93;
+            --text-tertiary: #636366;
+            --accent-blue: #0a84ff;
+            --accent-green: #30d158;
+            --accent-yellow: #ffd60a;
+            --accent-red: #ff453a;
+            --accent-orange: #ff9f0a;
+            --accent-pink: #ff2d92;
+            --separator: #38383a;
+            --spawn-pink: #ff2d92;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', sans-serif;
+            background: #000;
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 40px;
+        }
+        
+        .mockup-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            justify-content: center;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .section-label {
+            text-align: center;
+            padding: 40px 20px 30px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        
+        /* iPhone Frame */
+        .iphone-frame {
+            width: 390px;
+            height: 844px;
+            background: var(--bg-primary);
+            border-radius: 50px;
+            padding: 12px;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.5), inset 0 0 0 3px #1a1a1a;
+            position: relative;
+        }
+        
+        .iphone-screen {
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Dynamic Island */
+        .dynamic-island {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 126px;
+            height: 37px;
+            background: #000;
+            border-radius: 20px;
+            z-index: 100;
+        }
+        
+        /* Screen Content */
+        .screen-content {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding-top: 60px;
+        }
+        
+        /* Navigation Bar */
+        .nav-bar {
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .nav-back {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--spawn-pink);
+            font-size: 17px;
+            min-width: 60px;
+        }
+        
+        .nav-title {
+            font-size: 17px;
+            font-weight: 600;
+        }
+        
+        .nav-action {
+            color: var(--spawn-pink);
+            font-size: 17px;
+            min-width: 60px;
+            text-align: right;
+        }
+        
+        /* Scrollable Content */
+        .scroll-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 20px 40px;
+        }
+        
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 30px 0;
+        }
+        
+        .hero-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #ff2d92 0%, #ff6b6b 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin: 0 auto 20px;
+        }
+        
+        .hero-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .hero-subtitle {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        
+        /* Step Cards */
+        .step-card {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .step-number {
+            width: 28px;
+            height: 28px;
+            background: var(--spawn-pink);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+        }
+        
+        .step-title {
+            font-size: 17px;
+            font-weight: 600;
+        }
+        
+        .step-content {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        
+        /* Code Block */
+        .code-block {
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+            padding: 14px;
+            margin: 12px 0;
+            font-family: 'SF Mono', 'Menlo', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            position: relative;
+        }
+        
+        .code-block code {
+            color: var(--text-primary);
+            white-space: pre;
+        }
+        
+        .code-copy {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--bg-quaternary);
+            border: none;
+            border-radius: 6px;
+            padding: 4px 8px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .code-copy:hover {
+            background: var(--accent-blue);
+            color: white;
+        }
+        
+        /* Token Display */
+        .token-display {
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 12px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .token-value {
+            flex: 1;
+            font-family: 'SF Mono', monospace;
+            font-size: 14px;
+            color: var(--spawn-pink);
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .token-copy-btn {
+            background: var(--spawn-pink);
+            border: none;
+            border-radius: 8px;
+            padding: 8px 14px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        /* Tab Selector */
+        .tab-selector {
+            display: flex;
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+            padding: 4px;
+            margin: 12px 0;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+        
+        .tab.active {
+            background: var(--bg-quaternary);
+            color: var(--text-primary);
+        }
+        
+        /* Status Indicator */
+        .status-waiting {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 16px;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        
+        .status-waiting .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--bg-quaternary);
+            border-top-color: var(--accent-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .status-connected {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 16px;
+            background: rgba(48, 209, 88, 0.15);
+            border-radius: 12px;
+            margin: 20px 0;
+            color: var(--accent-green);
+            font-weight: 500;
+        }
+        
+        /* Accordion */
+        .accordion {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+        
+        .accordion-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            cursor: pointer;
+        }
+        
+        .accordion-title {
+            font-size: 15px;
+            font-weight: 500;
+        }
+        
+        .accordion-icon {
+            color: var(--text-tertiary);
+            transition: transform 0.2s;
+        }
+        
+        .accordion.open .accordion-icon {
+            transform: rotate(90deg);
+        }
+        
+        .accordion-content {
+            padding: 0 16px 16px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            display: none;
+        }
+        
+        .accordion.open .accordion-content {
+            display: block;
+        }
+        
+        /* Info Box */
+        .info-box {
+            background: rgba(10, 132, 255, 0.15);
+            border-radius: 12px;
+            padding: 14px;
+            margin: 16px 0;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .info-box-icon {
+            font-size: 18px;
+        }
+        
+        .info-box-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        
+        /* Button */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            border-radius: 14px;
+            font-size: 17px;
+            font-weight: 600;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        
+        .btn-primary {
+            background: var(--spawn-pink);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        
+        /* List */
+        .feature-list {
+            margin: 16px 0;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 0.5px solid var(--separator);
+        }
+        
+        .feature-item:last-child {
+            border-bottom: none;
+        }
+        
+        .feature-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        
+        .feature-info {
+            flex: 1;
+        }
+        
+        .feature-title {
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+        
+        .feature-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        /* Docs Page Styles */
+        .docs-header {
+            padding: 20px 0;
+            border-bottom: 0.5px solid var(--separator);
+            margin-bottom: 20px;
+        }
+        
+        .docs-search {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .docs-search input {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 16px;
+            flex: 1;
+            outline: none;
+        }
+        
+        .docs-search input::placeholder {
+            color: var(--text-tertiary);
+        }
+        
+        .docs-section {
+            margin-bottom: 30px;
+        }
+        
+        .docs-section-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+        
+        .docs-card {
+            background: var(--bg-secondary);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+        }
+        
+        .docs-card:hover {
+            background: var(--bg-tertiary);
+        }
+        
+        .docs-card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+        
+        .docs-card-icon.blue { background: rgba(10, 132, 255, 0.2); }
+        .docs-card-icon.green { background: rgba(48, 209, 88, 0.2); }
+        .docs-card-icon.yellow { background: rgba(255, 214, 10, 0.2); }
+        .docs-card-icon.purple { background: rgba(191, 90, 242, 0.2); }
+        .docs-card-icon.orange { background: rgba(255, 159, 10, 0.2); }
+        
+        .docs-card-info {
+            flex: 1;
+        }
+        
+        .docs-card-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+        
+        .docs-card-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        .docs-card-arrow {
+            color: var(--text-tertiary);
+            font-size: 18px;
+        }
+        
+        /* Video Embed Placeholder */
+        .video-placeholder {
+            background: var(--bg-tertiary);
+            border-radius: 14px;
+            aspect-ratio: 16/9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 16px 0;
+            cursor: pointer;
+        }
+        
+        .video-play {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #000;
+        }
+        
+        /* Bottom Tab Bar */
+        .tab-bar {
+            display: flex;
+            border-top: 0.5px solid var(--separator);
+            padding: 10px 0;
+            padding-bottom: 30px;
+            background: var(--bg-primary);
+        }
+        
+        .tab-bar-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-tertiary);
+            font-size: 10px;
+        }
+        
+        .tab-bar-item.active {
+            color: var(--accent-blue);
+        }
+        
+        .tab-bar-icon {
+            font-size: 24px;
+        }
+        
+        /* Send Options */
+        .send-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .send-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            cursor: pointer;
+        }
+        
+        .send-option:hover {
+            background: var(--bg-quaternary);
+        }
+        
+        .send-option-icon {
+            font-size: 24px;
+            width: 36px;
+            text-align: center;
+        }
+        
+        .send-option-info {
+            flex: 1;
+        }
+        
+        .send-option-title {
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+        
+        .send-option-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        .send-option-arrow {
+            color: var(--text-tertiary);
+            font-size: 18px;
+        }
+        
+        /* Tab Content */
+        .tab-content {
+            margin-top: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="section-label">Connect Agent Onboarding Flow</div>
+    
+    <div class="mockup-container">
+        <!-- Screen 1: Create Agent -->
+        <div>
+            <h3 style="text-align: center; color: var(--text-secondary); margin-bottom: 20px; font-weight: 500;">1. Create Agent</h3>
+            <div class="iphone-frame">
+                <div class="iphone-screen">
+                    <div class="dynamic-island"></div>
+                    <div class="screen-content">
+                        <div class="nav-bar">
+                            <div class="nav-back">Cancel</div>
+                            <div class="nav-title">New Agent</div>
+                            <div class="nav-action"></div>
+                        </div>
+                        
+                        <div class="scroll-content">
+                            <div class="hero">
+                                <div class="hero-icon">🤖</div>
+                                <div class="hero-title">Connect Your Agent</div>
+                                <div class="hero-subtitle">Link an existing agent like Clawdbot, or create a new one from scratch.</div>
+                            </div>
+                            
+                            <!-- Agent Type Selection -->
+                            <div class="docs-card" style="border: 2px solid var(--accent-blue);">
+                                <div class="docs-card-icon yellow">🔗</div>
+                                <div class="docs-card-info">
+                                    <div class="docs-card-title">Connect Existing Agent</div>
+                                    <div class="docs-card-desc">Link Clawdbot or another agent you're already running</div>
+                                </div>
+                                <div class="docs-card-arrow">✓</div>
+                            </div>
+                            
+                            <div class="docs-card">
+                                <div class="docs-card-icon blue">✨</div>
+                                <div class="docs-card-info">
+                                    <div class="docs-card-title">Create New Agent</div>
+                                    <div class="docs-card-desc">Build a new agent from a template</div>
+                                </div>
+                                <div class="docs-card-arrow">›</div>
+                            </div>
+                            
+                            <div class="docs-card">
+                                <div class="docs-card-icon green">🛒</div>
+                                <div class="docs-card-info">
+                                    <div class="docs-card-title">Agent Marketplace</div>
+                                    <div class="docs-card-desc">Browse pre-built agents</div>
+                                </div>
+                                <div class="docs-card-arrow">›</div>
+                            </div>
+                            
+                            <button class="btn btn-primary">Continue</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Screen 2: Name & Token -->
+        <div>
+            <h3 style="text-align: center; color: var(--text-secondary); margin-bottom: 20px; font-weight: 500;">2. Get Token</h3>
+            <div class="iphone-frame">
+                <div class="iphone-screen">
+                    <div class="dynamic-island"></div>
+                    <div class="screen-content">
+                        <div class="nav-bar">
+                            <div class="nav-back">‹ Back</div>
+                            <div class="nav-title">Connect Agent</div>
+                            <div class="nav-action"></div>
+                        </div>
+                        
+                        <div class="scroll-content">
+                            <!-- Name Input -->
+                            <div style="margin-bottom: 24px;">
+                                <label style="font-size: 13px; color: var(--text-secondary); display: block; margin-bottom: 8px;">AGENT NAME</label>
+                                <input type="text" value="My Clawdbot" style="
+                                    width: 100%;
+                                    background: var(--bg-secondary);
+                                    border: none;
+                                    border-radius: 12px;
+                                    padding: 16px;
+                                    font-size: 17px;
+                                    color: var(--text-primary);
+                                    outline: none;
+                                ">
+                            </div>
+                            
+                            <!-- Token Section -->
+                            <div style="margin-bottom: 24px;">
+                                <label style="font-size: 13px; color: var(--text-secondary); display: block; margin-bottom: 8px;">YOUR AGENT TOKEN</label>
+                                <div class="token-display">
+                                    <span class="token-value">spwn_sk_7f8d9a2b3c4e5f...</span>
+                                    <button class="token-copy-btn">Copy</button>
+                                </div>
+                                <p style="font-size: 13px; color: var(--text-tertiary); margin-top: 8px;">
+                                    Add this token to your agent's environment to connect it.
+                                </p>
+                            </div>
+                            
+                            <!-- Quick Start -->
+                            <div class="step-card">
+                                <div class="step-header">
+                                    <div class="step-number">1</div>
+                                    <div class="step-title">Add to your environment</div>
+                                </div>
+                                <div class="code-block">
+                                    <button class="code-copy">Copy</button>
+                                    <code>export SPAWN_TOKEN=spwn_sk_7f8d9a2b3c4e5f...</code>
+                                </div>
+                            </div>
+                            
+                            <div class="step-card">
+                                <div class="step-header">
+                                    <div class="step-number">2</div>
+                                    <div class="step-title">Install the skill</div>
+                                </div>
+                                <div class="tab-selector">
+                                    <div class="tab active">Quick</div>
+                                    <div class="tab">Python</div>
+                                    <div class="tab">Manual</div>
+                                    <div class="tab">Send</div>
+                                </div>
+                                
+                                <!-- Quick Tab Content -->
+                                <div class="tab-content active" id="tab-quick">
+                                    <div class="code-block">
+                                        <button class="code-copy">Copy</button>
+                                        <code>cd ~/clawdbot/skills
+npx spawn-skill init</code>
+                                    </div>
+                                </div>
+                                
+                                <!-- Python Tab Content -->
+                                <div class="tab-content" id="tab-python" style="display: none;">
+                                    <div class="code-block">
+                                        <button class="code-copy">Copy</button>
+                                        <code>pip install spawn</code>
+                                    </div>
+                                    <p style="font-size: 13px; color: var(--text-tertiary); margin-top: 8px;">
+                                        Then add to your code:
+                                    </p>
+                                    <div class="code-block">
+                                        <code>import spawn
+spawn.init()
+await spawn.connect()</code>
+                                    </div>
+                                </div>
+                                
+                                <!-- Manual Tab Content -->
+                                <div class="tab-content" id="tab-manual" style="display: none;">
+                                    <div class="code-block">
+                                        <button class="code-copy">Copy</button>
+                                        <code>cd ~/clawdbot/skills
+git clone https://github.com/spawn/skill spawn</code>
+                                    </div>
+                                </div>
+                                
+                                <!-- Send Tab Content -->
+                                <div class="tab-content" id="tab-send" style="display: none;">
+                                    <div class="send-options">
+                                        <div class="send-option">
+                                            <div class="send-option-icon">📲</div>
+                                            <div class="send-option-info">
+                                                <div class="send-option-title">AirDrop to Mac</div>
+                                                <div class="send-option-desc">Send skill folder directly</div>
+                                            </div>
+                                            <div class="send-option-arrow">›</div>
+                                        </div>
+                                        
+                                        <div class="send-option">
+                                            <div class="send-option-icon">📧</div>
+                                            <div class="send-option-info">
+                                                <div class="send-option-title">Email Setup Files</div>
+                                                <div class="send-option-desc">Send to yourself with instructions</div>
+                                            </div>
+                                            <div class="send-option-arrow">›</div>
+                                        </div>
+                                        
+                                        <div class="send-option">
+                                            <div class="send-option-icon">📁</div>
+                                            <div class="send-option-info">
+                                                <div class="send-option-title">Download .zip</div>
+                                                <div class="send-option-desc">Save to Files, transfer manually</div>
+                                            </div>
+                                            <div class="send-option-arrow">›</div>
+                                        </div>
+                                        
+                                        <div class="send-option">
+                                            <div class="send-option-icon">🔗</div>
+                                            <div class="send-option-info">
+                                                <div class="send-option-title">Copy Setup Link</div>
+                                                <div class="send-option-desc">Open on any computer</div>
+                                            </div>
+                                            <div class="send-option-arrow">›</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="step-card">
+                                <div class="step-header">
+                                    <div class="step-number">3</div>
+                                    <div class="step-title">Restart your agent</div>
+                                </div>
+                                <div class="step-content">
+                                    The skill will automatically connect when your agent starts.
+                                </div>
+                            </div>
+                            
+                            <!-- Waiting Status -->
+                            <div class="status-waiting">
+                                <div class="spinner"></div>
+                                <span style="color: var(--text-secondary);">Waiting for connection...</span>
+                            </div>
+                            
+                            <button class="btn btn-secondary">View Full Setup Guide</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Screen 3: Connected! -->
+        <div>
+            <h3 style="text-align: center; color: var(--text-secondary); margin-bottom: 20px; font-weight: 500;">3. Connected!</h3>
+            <div class="iphone-frame">
+                <div class="iphone-screen">
+                    <div class="dynamic-island"></div>
+                    <div class="screen-content">
+                        <div class="nav-bar">
+                            <div class="nav-back"></div>
+                            <div class="nav-title">Agent Connected</div>
+                            <div class="nav-action"></div>
+                        </div>
+                        
+                        <div class="scroll-content">
+                            <div class="hero">
+                                <div class="hero-icon" style="background: linear-gradient(135deg, #30d158 0%, #34c759 100%);">✓</div>
+                                <div class="hero-title">You're Connected!</div>
+                                <div class="hero-subtitle">My Clawdbot is now linked to Spawn.</div>
+                            </div>
+                            
+                            <div class="status-connected">
+                                <span>●</span>
+                                <span>My Clawdbot is online</span>
+                            </div>
+                            
+                            <!-- What's Next -->
+                            <div style="margin-top: 30px;">
+                                <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">What's Next</h3>
+                                
+                                <div class="feature-list">
+                                    <div class="feature-item">
+                                        <div class="feature-icon">⚙️</div>
+                                        <div class="feature-info">
+                                            <div class="feature-title">Configure Safety Settings</div>
+                                            <div class="feature-desc">Set permissions, paths, and auto-spawn rules</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="feature-item">
+                                        <div class="feature-icon">💬</div>
+                                        <div class="feature-info">
+                                            <div class="feature-title">Send Your First Task</div>
+                                            <div class="feature-desc">Start a conversation with your agent</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="feature-item">
+                                        <div class="feature-icon">🔔</div>
+                                        <div class="feature-info">
+                                            <div class="feature-title">Enable Notifications</div>
+                                            <div class="feature-desc">Get alerts when your agent needs you</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button class="btn btn-primary">Start Chatting</button>
+                            <button class="btn btn-secondary" style="margin-top: 12px;">Configure Settings</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="section-label" style="margin-top: 60px;">Documentation / How To Page</div>
+    
+    <div class="mockup-container">
+        <!-- Docs Home -->
+        <div>
+            <h3 style="text-align: center; color: var(--text-secondary); margin-bottom: 20px; font-weight: 500;">Docs Home</h3>
+            <div class="iphone-frame">
+                <div class="iphone-screen">
+                    <div class="dynamic-island"></div>
+                    <div class="screen-content">
+                        <div class="nav-bar">
+                            <div class="nav-back"></div>
+                            <div class="nav-title">Help & Docs</div>
+                            <div class="nav-action"></div>
+                        </div>
+                        
+                        <div class="scroll-content">
+                            <!-- Search -->
+                            <div class="docs-search">
+                                <span style="color: var(--text-tertiary);">🔍</span>
+                                <input type="text" placeholder="Search documentation...">
+                            </div>
+                            
+                            <!-- Getting Started -->
+                            <div class="docs-section">
+                                <div class="docs-section-title">Getting Started</div>
+                                
+                                <div class="docs-card">
+                                    <div class="docs-card-icon blue">🚀</div>
+                                    <div class="docs-card-info">
+                                        <div class="docs-card-title">Quick Start Guide</div>
+                                        <div class="docs-card-desc">Connect your first agent in 5 minutes</div>
+                                    </div>
+                                    <div class="docs-card-arrow">›</div>
+                                </div>
+                                
+                                <div class="docs-card">
+                                    <div class="docs-card-icon yellow">🔗</div>
+                                    <div class="docs-card-info">
+                                        <div class="docs-card-title">Connect Clawdbot</div>
+                                        <div class="docs-card-desc">Step-by-step Clawdbot integration</div>
+                                    </div>
+                                    <div class="docs-card-arrow">›</div>
+                                </div>
+                                
+                                <div class="docs-card">
+                                    <div class="docs-card-icon green">📱</div>
+                                    <div class="docs-card-info">
+                                        <div class="docs-card-title">App Overview</div>
+                                        <div class="docs-card-desc">Learn the interface basics</div>
+                                    </div>
+                                    <div class="docs-card-arrow">›</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Integration -->
+                            <div class="docs-section">
+                                <div class="docs-section-title">Integration</div>
+                                
+                                <div class="docs-card">
+                                    <div class="docs-card-icon purple">🐍</div>
+                                    <div class="docs-card-info">
+                                        <div class="docs-card-title">Python SDK</div>
+                                        <div class="docs-card-desc">pip install spawn</div>
+                                    </div>
+                                    <div class="docs-card-arrow">›</div>
+                                </div>
+                                
+                                <div class="docs-card">
+                                    <div class="docs-card-icon orange">📦</div>
+                                    <div class="docs-card-info">
+                                        <div class="docs-card-title">Node.js SDK</div>
+                                        <div class="docs-card-desc">npm install spawn</div>
+                                    </div>
+                                    <div class="docs-card-arrow">›</div>
+                                </div>
+                                
+                                <div class="docs-card">
+                                    <div class="docs-card-icon blue">📄</div>
+                                    <div class="docs-card-info">
+                                        <div class="docs-card-title">Protocol Reference</div>
+                                        <div class="docs-card-desc">WebSocket API documentation</div>
+                                    </div>
+                                    <div class="docs-card-arrow">›</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Safety -->
+                            <div class="docs-section">
+                                <div class="docs-section-title">Safety & Settings</div>
+                                
+                                <div class="docs-card">
+                                    <div class="docs-card-icon green">🔒</div>
+                                    <div class="docs-card-info">
+                                        <div class="docs-card-title">Safety Settings Guide</div>
+                                        <div class="docs-card-desc">Configure permissions and limits</div>
+                                    </div>
+                                    <div class="docs-card-arrow">›</div>
+                                </div>
+                                
+                                <div class="docs-card">
+                                    <div class="docs-card-icon yellow">⚡</div>
+                                    <div class="docs-card-info">
+                                        <div class="docs-card-title">Auto-Spawn Mode</div>
+                                        <div class="docs-card-desc">Autonomous sub-agent management</div>
+                                    </div>
+                                    <div class="docs-card-arrow">›</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Tab Bar -->
+                        <div class="tab-bar">
+                            <div class="tab-bar-item">
+                                <div class="tab-bar-icon">💬</div>
+                                <span>Agents</span>
+                            </div>
+                            <div class="tab-bar-item">
+                                <div class="tab-bar-icon">🛒</div>
+                                <span>Marketplace</span>
+                            </div>
+                            <div class="tab-bar-item active">
+                                <div class="tab-bar-icon">📖</div>
+                                <span>Docs</span>
+                            </div>
+                            <div class="tab-bar-item">
+                                <div class="tab-bar-icon">⚙️</div>
+                                <span>Settings</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Connect Clawdbot Guide -->
+        <div>
+            <h3 style="text-align: center; color: var(--text-secondary); margin-bottom: 20px; font-weight: 500;">Clawdbot Guide</h3>
+            <div class="iphone-frame">
+                <div class="iphone-screen">
+                    <div class="dynamic-island"></div>
+                    <div class="screen-content">
+                        <div class="nav-bar">
+                            <div class="nav-back">‹ Docs</div>
+                            <div class="nav-title">Connect Clawdbot</div>
+                            <div class="nav-action"></div>
+                        </div>
+                        
+                        <div class="scroll-content">
+                            <!-- Video -->
+                            <div class="video-placeholder">
+                                <div class="video-play">▶</div>
+                            </div>
+                            <p style="text-align: center; font-size: 13px; color: var(--text-tertiary); margin-bottom: 24px;">Watch: Connect Clawdbot in 2 minutes</p>
+                            
+                            <!-- Prerequisites -->
+                            <div class="info-box">
+                                <div class="info-box-icon">ℹ️</div>
+                                <div class="info-box-text">
+                                    <strong>Prerequisites:</strong> Clawdbot running on your Mac, Linux server, or Docker container.
+                                </div>
+                            </div>
+                            
+                            <!-- Steps -->
+                            <div class="step-card">
+                                <div class="step-header">
+                                    <div class="step-number">1</div>
+                                    <div class="step-title">Create an agent in the app</div>
+                                </div>
+                                <div class="step-content">
+                                    Tap the + button and select "Connect Existing Agent". Give it a name and copy your token.
+                                </div>
+                            </div>
+                            
+                            <div class="step-card">
+                                <div class="step-header">
+                                    <div class="step-number">2</div>
+                                    <div class="step-title">Add token to your environment</div>
+                                </div>
+                                <div class="step-content">Add to your <code>.env</code> file or export directly:</div>
+                                <div class="code-block">
+                                    <button class="code-copy">Copy</button>
+                                    <code># In ~/.clawdbot/.env
+SPAWN_TOKEN=spwn_sk_your_token</code>
+                                </div>
+                            </div>
+                            
+                            <div class="step-card">
+                                <div class="step-header">
+                                    <div class="step-number">3</div>
+                                    <div class="step-title">Install the Spawn skill</div>
+                                </div>
+                                <div class="code-block">
+                                    <button class="code-copy">Copy</button>
+                                    <code>cd ~/clawdbot/skills
+npx spawn-skill init</code>
+                                </div>
+                                <div class="step-content" style="margin-top: 12px;">
+                                    This creates the skill folder and configures the integration.
+                                </div>
+                            </div>
+                            
+                            <div class="step-card">
+                                <div class="step-header">
+                                    <div class="step-number">4</div>
+                                    <div class="step-title">Restart Clawdbot</div>
+                                </div>
+                                <div class="code-block">
+                                    <button class="code-copy">Copy</button>
+                                    <code># If running directly:
+clawdbot restart
+
+# If using Docker:
+docker restart clawdbot</code>
+                                </div>
+                            </div>
+                            
+                            <!-- Success -->
+                            <div class="status-connected" style="margin-top: 24px;">
+                                <span>✓</span>
+                                <span>Your agent should appear in the app!</span>
+                            </div>
+                            
+                            <!-- FAQ -->
+                            <h3 style="font-size: 17px; font-weight: 600; margin: 30px 0 16px;">Common Questions</h3>
+                            
+                            <div class="accordion open">
+                                <div class="accordion-header">
+                                    <span class="accordion-title">What if I don't have a skills folder?</span>
+                                    <span class="accordion-icon">›</span>
+                                </div>
+                                <div class="accordion-content">
+                                    You can add the integration directly to your main script instead. See the "Manual Integration" section below.
+                                </div>
+                            </div>
+                            
+                            <div class="accordion">
+                                <div class="accordion-header">
+                                    <span class="accordion-title">Will this affect my existing setup?</span>
+                                    <span class="accordion-icon">›</span>
+                                </div>
+                                <div class="accordion-content">
+                                    No. Spawn is additive — it doesn't change how Clawdbot runs. It just adds a new communication channel.
+                                </div>
+                            </div>
+                            
+                            <div class="accordion">
+                                <div class="accordion-header">
+                                    <span class="accordion-title">Can I still use Telegram?</span>
+                                    <span class="accordion-icon">›</span>
+                                </div>
+                                <div class="accordion-content">
+                                    Yes! You can use both simultaneously. Many users keep Telegram for quick commands and use Spawn for complex tasks.
+                                </div>
+                            </div>
+                            
+                            <div class="accordion">
+                                <div class="accordion-header">
+                                    <span class="accordion-title">Is my data secure?</span>
+                                    <span class="accordion-icon">›</span>
+                                </div>
+                                <div class="accordion-content">
+                                    Messages are end-to-end encrypted. Your agent token is like a password — never share it. You can regenerate it anytime in Settings.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- SDK Reference -->
+        <div>
+            <h3 style="text-align: center; color: var(--text-secondary); margin-bottom: 20px; font-weight: 500;">SDK Quick Reference</h3>
+            <div class="iphone-frame">
+                <div class="iphone-screen">
+                    <div class="dynamic-island"></div>
+                    <div class="screen-content">
+                        <div class="nav-bar">
+                            <div class="nav-back">‹ Docs</div>
+                            <div class="nav-title">Python SDK</div>
+                            <div class="nav-action"></div>
+                        </div>
+                        
+                        <div class="scroll-content">
+                            <!-- Install -->
+                            <div class="step-card">
+                                <div class="step-header">
+                                    <div class="step-title">Installation</div>
+                                </div>
+                                <div class="code-block">
+                                    <code>pip install spawn</code>
+                                </div>
+                            </div>
+                            
+                            <!-- Basic Usage -->
+                            <div class="step-card">
+                                <div class="step-header">
+                                    <div class="step-title">Basic Usage</div>
+                                </div>
+                                <div class="code-block">
+                                    <code>import spawn
+from spawn import ui, status
+
+spawn.init("spwn_sk_...")
+await spawn.connect()
+
+# Send messages
+await ui.send_text("Hello!")
+await ui.send_card(
+    title="Stats",
+    value="$1,234"
+)</code>
+                                </div>
+                            </div>
+                            
+                            <!-- Modules -->
+                            <h3 style="font-size: 15px; font-weight: 600; margin: 24px 0 12px;">Modules</h3>
+                            
+                            <div class="docs-card">
+                                <div class="docs-card-icon blue">💬</div>
+                                <div class="docs-card-info">
+                                    <div class="docs-card-title">ui</div>
+                                    <div class="docs-card-desc">send_text, send_card, send_table, send_chart</div>
+                                </div>
+                                <div class="docs-card-arrow">›</div>
+                            </div>
+                            
+                            <div class="docs-card">
+                                <div class="docs-card-icon green">📊</div>
+                                <div class="docs-card-info">
+                                    <div class="docs-card-title">status</div>
+                                    <div class="docs-card-desc">set("working", "Processing...")</div>
+                                </div>
+                                <div class="docs-card-arrow">›</div>
+                            </div>
+                            
+                            <div class="docs-card">
+                                <div class="docs-card-icon yellow">✋</div>
+                                <div class="docs-card-info">
+                                    <div class="docs-card-title">approval</div>
+                                    <div class="docs-card-desc">confirm, confirm_trade, confirm_with_options</div>
+                                </div>
+                                <div class="docs-card-arrow">›</div>
+                            </div>
+                            
+                            <div class="docs-card">
+                                <div class="docs-card-icon purple">🔒</div>
+                                <div class="docs-card-info">
+                                    <div class="docs-card-title">policy</div>
+                                    <div class="docs-card-desc">is_allowed, is_forbidden, is_path_allowed</div>
+                                </div>
+                                <div class="docs-card-arrow">›</div>
+                            </div>
+                            
+                            <div class="docs-card">
+                                <div class="docs-card-icon orange">🤖</div>
+                                <div class="docs-card-info">
+                                    <div class="docs-card-title">agents</div>
+                                    <div class="docs-card-desc">request_spawn, active, kill_all</div>
+                                </div>
+                                <div class="docs-card-arrow">›</div>
+                            </div>
+                            
+                            <div class="docs-card">
+                                <div class="docs-card-icon blue">🔔</div>
+                                <div class="docs-card-info">
+                                    <div class="docs-card-title">notify</div>
+                                    <div class="docs-card-desc">send(title, body, priority)</div>
+                                </div>
+                                <div class="docs-card-arrow">›</div>
+                            </div>
+                            
+                            <!-- Example -->
+                            <h3 style="font-size: 15px; font-weight: 600; margin: 24px 0 12px;">Full Example</h3>
+                            
+                            <div class="code-block" style="font-size: 11px;">
+                                <code>from spawn import ui, status, approval, policy
+
+async def do_risky_thing(path):
+    # Check policy first
+    if policy.is_path_forbidden(path):
+        await ui.send_text(f"Can't access {path}")
+        return
+    
+    # Ask for approval
+    if policy.requires_approval("files.write"):
+        ok = await approval.confirm(
+            title=f"Write to {path}?",
+            danger_level="medium"
+        )
+        if not ok:
+            return
+    
+    # Do the thing
+    await status.set("working", "Writing...")
+    write_file(path)
+    await status.set("idle")
+    await ui.send_text("Done!")</code>
+                            </div>
+                            
+                            <button class="btn btn-secondary">View Full API Reference</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
