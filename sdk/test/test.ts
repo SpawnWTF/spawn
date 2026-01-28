@@ -10,8 +10,13 @@
 import { SpawnAgent } from '../src/index.js';
 import type { SpawnMessage } from '../src/index.js';
 
-// Agent token - can be set via TOKEN env var or defaults to test token
-const TEST_TOKEN = process.env.TOKEN || 'spwn_sk_03cd8df8862c445aba0325dca49abb28';
+// Agent token - MUST be set via TOKEN env var
+const TEST_TOKEN = process.env.TOKEN;
+if (!TEST_TOKEN) {
+  console.error('Error: TOKEN environment variable is required');
+  console.error('Usage: TOKEN=spwn_sk_xxx npm test');
+  process.exit(1);
+}
 const AGENT_NAME = process.env.NAME || 'Clawdbot';
 
 console.log('='.repeat(50));
