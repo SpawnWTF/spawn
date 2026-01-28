@@ -1,286 +1,224 @@
-# Spawn.wtf
+<p align="center">
+  <img src="https://spawn.wtf/logo.png" alt="SPAWN.WTF" width="400">
+</p>
 
-> **The Activity Monitor for AI Agents**
+<h3 align="center">The Activity Monitor for AI Agents</h3>
 
-Control your AI agents from your phone. See what they're doing. Approve dangerous actions. Kill runaway processes.
+<p align="center">
+  Control your AI agents from your phone. See what they're doing.<br>
+  Approve dangerous actions. Kill runaway processes.
+</p>
 
-![Spawn.wtf Logo](https://spawn.wtf/logo.png)
+<p align="center">
+  <a href="https://spawn.wtf">Website</a> •
+  <a href="#quick-start">Quick Start</a> •
+  <a href="#sdk">SDK</a> •
+  <a href="https://discord.gg/spawnwtf">Discord</a>
+</p>
 
 ---
 
 ## What is Spawn?
 
-Spawn is a native iOS/macOS app that gives you a visual interface for your AI agents. Instead of walls of terminal text or Telegram messages, you get:
+Spawn is a native iOS app that gives you a visual interface for your AI agents. Instead of walls of terminal text, you get:
 
-- 📱 **Rich UI** — Cards, charts, tables, progress indicators
-- 🔒 **Safety Controls** — Approve dangerous actions before they execute
-- 🤖 **Sub-Agent Visualization** — See agents spawn and manage child processes
-- ⚡ **Real-time Status** — Dynamic Island integration, push notifications
-- 🎛️ **Permission Management** — Control what agents can do autonomously
+- **Real-time Status** — See when agents are online, thinking, or idle
+- **Rich Messages** — Cards, tables, formatted text from your agents
+- **Push Notifications** — Get alerts when agents need attention
+- **Chat Interface** — Send commands and receive responses
+- **Sub-Agent Trees** — Visualize agent hierarchies and spawning
+
+---
+
+## Quick Start
+
+### 1. Download the App
+Get Spawn from the App Store (iOS).
+
+### 2. Create an Agent
+Open the app → Tap **+** → Name your agent → Get your token.
+
+### 3. Connect Your Agent
+
+**Option A: Quick Install (NPX)**
+```bash
+npx spawn-skill init --token YOUR_TOKEN
+```
+
+**Option B: SDK Install**
+```bash
+npm install @spawn/agent-sdk
+```
+
+```typescript
+import { SpawnAgent } from '@spawn/agent-sdk';
+
+const agent = new SpawnAgent({
+  token: 'spwn_sk_xxx',
+  name: 'My Agent',
+  onConnect: () => agent.sendText('Agent online!'),
+  onMessage: (msg) => console.log('Received:', msg)
+});
+
+agent.connect();
+```
 
 ---
 
 ## Repository Structure
 
 ```
-spawn-wtf-complete/
-├── README.md                    # This file
-│
-├── docs/
-│   ├── PRODUCT-SPEC.md          # Product vision, features, architecture
-│   └── UI-SPEC.md               # SwiftUI components, design system
-│
-├── protocol/
-│   └── PROTOCOL.md              # WebSocket protocol, message types,
-│                                # sub-agent spawning, auto-spawn mode
-│
-├── app-mockups/
-│   ├── spawn-mockups.html       # Interactive UI mockups (main app)
-│   └── spawn-onboarding.html    # Connect agent flow, docs pages
-│
-└── sdk/
-    ├── README.md                # SDK documentation
-    ├── package.json             # npm package config
-    ├── SKILL.md                 # Agent skill file
-    ├── bin/
-    │   └── cli.js               # npx spawn-skill CLI
-    ├── spawn/
-    │   └── __init__.py          # Python SDK
-    ├── templates/
-    │   ├── SKILL.md
-    │   └── spawn/
-    │       ├── __init__.py      # Python SDK template
-    │       └── index.ts         # TypeScript SDK
-    └── examples/
-        └── clawdbot_integration.py
+├── relay/          # Cloudflare Workers relay server
+├── sdk/            # TypeScript Agent SDK
+├── spawn-skill/    # NPX CLI installer
+├── docs/           # Product & UI specs
+├── protocol/       # WebSocket protocol spec
+└── app-mockups/    # Interactive HTML mockups
 ```
 
 ---
 
-## Quick Start
+## SDK
 
-### 1. Download Spawn App
-
-Get it from the App Store (iOS) or download for Mac.
-
-### 2. Create an Agent
-
-Open the app → Tap **+** → Select "Connect Existing Agent"
-
-### 3. Install the Skill
+### Installation
 
 ```bash
-cd ~/clawdbot/skills
-npx spawn-skill init
+npm install @spawn/agent-sdk
 ```
 
-### 4. Restart Your Agent
+### Basic Usage
+
+```typescript
+import { SpawnAgent } from '@spawn/agent-sdk';
+
+const agent = new SpawnAgent({
+  token: process.env.SPAWN_TOKEN,
+  name: 'My Agent',
+
+  onConnect: () => {
+    agent.sendText('Hello from my agent!');
+    agent.updateStatus('idle', 'Ready for commands');
+  },
+
+  onMessage: (msg) => {
+    if (msg.type === 'message') {
+      agent.updateStatus('thinking', 'Processing...');
+      // Handle the message
+      agent.sendText(`You said: ${msg.payload.text}`);
+      agent.updateStatus('idle', 'Ready');
+    }
+  }
+});
+
+agent.connect();
+```
+
+### Send Rich Cards
+
+```typescript
+agent.sendCard({
+  title: 'Build Complete',
+  subtitle: 'All tests passed',
+  style: 'success',
+  fields: [
+    { label: 'Duration', value: '2m 34s' },
+    { label: 'Tests', value: '142 passed' },
+    { label: 'Coverage', value: '87%' }
+  ],
+  footer: 'Completed just now'
+});
+```
+
+### Push Notifications
+
+```typescript
+agent.notify(
+  'Task Complete',
+  'The deployment finished successfully',
+  'normal'  // 'silent' | 'normal' | 'urgent'
+);
+```
+
+### Status Updates
+
+```typescript
+agent.updateStatus('thinking', 'Analyzing code...');
+agent.updateStatus('idle', 'Ready');
+agent.updateStatus('error', 'Build failed');
+```
+
+---
+
+## Relay Server
+
+The relay handles WebSocket connections between agents and the iOS app.
+
+### Deploy to Cloudflare
 
 ```bash
-clawdbot restart
+cd relay
+npm install
+npm run deploy
 ```
 
-Your agent appears in the app. Done.
+### Local Development
 
----
-
-## Core Concepts
-
-### Agents vs Sub-Agents
-
-**Agent**: Your main AI process (e.g., Clawdbot running on your Mac Mini)
-
-**Sub-Agent**: A child process spawned by your agent for parallel work
-
-```
-Clawdbot (main agent)
-├── CodeRewriter (sub-agent)
-├── TestRunner (sub-agent)
-└── DocGenerator (sub-agent)
-```
-
-### Ghost Cards (Spawn Requests)
-
-When an agent wants to spawn a sub-agent, it doesn't just happen. A "ghost card" appears in the UI — translucent, pulsing, waiting for your approval.
-
-You see:
-- What the sub-agent wants to do
-- What permissions it needs
-- Why the parent agent needs it
-
-Tap **Approve** and the ghost card fills in, becoming active.
-
-### Auto-Spawn Mode
-
-For autonomous operation, configure safety limits:
-
-| Mode | Description |
-|------|-------------|
-| **Off** | Every spawn requires approval |
-| **Queue** | Spawns batch up for morning review |
-| **Constrained** | Auto-approve within strict limits |
-| **Trusted** | Auto-approve from trusted parent agents |
-| **Unrestricted** | Full autonomy (dangerous) |
-
-Safety toggles:
-- Max concurrent sub-agents
-- Forbidden permissions (shell, delete, recursive spawn)
-- Protected paths (~/.ssh, ~/.aws, .env files)
-- Resource budgets (tokens, tool calls)
-- Circuit breakers (pause on errors, require check-in)
-
-### Confirmation Tiers
-
-| Risk Level | UI Treatment |
-|------------|--------------|
-| **Low** | Tap to confirm |
-| **Medium** | Yellow card, tap to confirm |
-| **High** | Red card, slide to confirm |
-| **Critical** | Red card, Face ID required |
-
----
-
-## SDK Modules
-
-```python
-from spawn import ui, status, approval, policy, agents, notify
-
-# Send rich messages
-await ui.send_card(title="Stats", value="$1,234")
-
-# Update status
-await status.set("working", "Processing...")
-
-# Request approval
-approved = await approval.confirm("Delete logs?", danger_level="high")
-
-# Check user's safety settings
-if policy.is_path_forbidden("/etc/passwd"):
-    await ui.send_text("Can't access that path")
-
-# Spawn sub-agents
-sub = await agents.request_spawn(
-    name="TestRunner",
-    permissions=[{"scope": "files.read", "path": "/tests/**"}]
-)
-
-# Push notifications
-await notify.send("Task complete!", priority="high")
+```bash
+cd relay
+npm run dev
 ```
 
 ---
 
-## Protocol Overview
+## Protocol
 
-WebSocket connection to `wss://relay.spawn.wtf/v1/agent`
+WebSocket connection to `wss://your-relay.workers.dev/v1/agent`
 
-### Key Message Types
+### Message Types
 
-| Type | Direction | Purpose |
-|------|-----------|---------|
-| `text` | Agent → App | Send text message |
-| `card` | Agent → App | Send rich card |
-| `confirmation_request` | Agent → App | Request user approval |
-| `confirmation_response` | App → Agent | User's decision |
-| `agent_spawn_request` | Agent → App | Request to create sub-agent |
-| `agent_spawn_response` | App → Agent | Approve/reject spawn |
-| `status_update` | Agent → App | Update header status |
-| `notification` | Agent → App | Push notification |
+| Type | Direction | Description |
+|------|-----------|-------------|
+| `auth` | Agent → Relay | Authenticate with token |
+| `auth_success` | Relay → Agent | Authentication confirmed |
+| `message` | Bidirectional | Text or card messages |
+| `status_update` | Agent → Relay | Update agent status |
+| `agent_status` | Relay → App | Broadcast status changes |
+| `notification` | Agent → Relay | Push notification to app |
 
-See `protocol/PROTOCOL.md` for complete specification.
+### Agent Status
+
+| Status | Description |
+|--------|-------------|
+| `online` | Agent connected |
+| `idle` | Ready and waiting |
+| `thinking` | Processing a request |
+| `error` | Something went wrong |
+| `offline` | Disconnected |
+
+See [`protocol/PROTOCOL.md`](protocol/PROTOCOL.md) for the complete specification.
 
 ---
 
-## Design System
+## Design
 
 ### Colors
 
-| Name | Hex | Usage |
-|------|-----|-------|
-| Spawn Pink | `#ff2d92` | Primary accent, buttons, links |
+| Color | Hex | Usage |
+|-------|-----|-------|
+| Spawn Pink | `#ff2d92` | Primary accent |
 | Background | `#000000` | App background |
-| Card BG | `#1c1c1e` | Card backgrounds |
-| Text Primary | `#ffffff` | Main text |
-| Text Secondary | `#8e8e93` | Subtle text |
+| Card BG | `#1c1c1e` | Card surfaces |
 | Success | `#30d158` | Positive states |
-| Warning | `#ffd60a` | Caution states |
-| Danger | `#ff453a` | Error/destructive states |
-
-### Typography
-
-- **SF Pro Display**: Headlines
-- **SF Pro Text**: Body text
-- **SF Mono**: Code, tokens
-
-### Components
-
-See `docs/UI-SPEC.md` for SwiftUI implementations of:
-- Agent cards (main and sub-agent)
-- Ghost cards (spawn requests)
-- Confirmation dialogs (all tiers)
-- Status indicators
-- Progress bars
-- Kill switches
-- Observability panels
-
----
-
-## Mockups
-
-Open these HTML files in a browser to see interactive mockups:
-
-- **`app-mockups/spawn-mockups.html`** — Main app screens:
-  - Agent chat with sub-agent threads
-  - Sidebar navigation
-  - Ghost card spawn requests
-  - Auto-spawn settings
-  - Confirmation cards
-  - Dynamic Island states
-
-- **`app-mockups/spawn-onboarding.html`** — Onboarding flow:
-  - Create agent screen
-  - Get token screen
-  - Connected success screen
-  - Documentation pages
-  - SDK quick reference
-
----
-
-## Development Roadmap
-
-### Phase 1: MVP
-- [ ] iOS app with basic chat
-- [ ] WebSocket relay server
-- [ ] Python SDK
-- [ ] Clawdbot integration
-
-### Phase 2: Safety
-- [ ] Confirmation flows (all tiers)
-- [ ] Sub-agent spawning
-- [ ] Ghost cards
-- [ ] Permission scoping
-
-### Phase 3: Autonomy
-- [ ] Auto-spawn mode
-- [ ] Safety settings panel
-- [ ] Circuit breakers
-- [ ] Check-in flow
-- [ ] Morning summary
-
-### Phase 4: Platform
-- [ ] macOS app
-- [ ] Agent marketplace
-- [ ] TypeScript SDK
-- [ ] Public API
+| Warning | `#ffd60a` | Caution |
+| Danger | `#ff453a` | Errors |
 
 ---
 
 ## Links
 
-- **Website**: https://spawn.wtf
-- **Documentation**: https://spawn.wtf/docs
-- **GitHub**: https://github.com/spawnwtf
-- **Discord**: https://discord.gg/spawnwtf
+- **Website**: [spawn.wtf](https://spawn.wtf)
+- **Discord**: [discord.gg/spawnwtf](https://discord.gg/spawnwtf)
+- **Twitter**: [@spawnwtf](https://twitter.com/spawnwtf)
 
 ---
 
@@ -290,4 +228,6 @@ MIT
 
 ---
 
-*"The Activity Monitor for the AI era"*
+<p align="center">
+  <i>"The Activity Monitor for the AI era"</i>
+</p>
