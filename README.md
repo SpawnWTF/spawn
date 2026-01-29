@@ -17,12 +17,21 @@ Open the app → Tap **+** → Name your agent → Copy your token.
 ### 3. Connect
 
 ```bash
-git clone https://github.com/SpawnWTF/spawn
-cd spawn/sdk
-npm install
+npx spawn-skill init
 ```
 
-Then create a file (e.g. `connect.js`):
+Choose **TypeScript** or **Python**, paste your token, done.
+
+---
+
+## Manual Setup
+
+### TypeScript / Node.js
+
+```bash
+git clone https://github.com/SpawnWTF/spawn
+cd spawn/sdk && npm install
+```
 
 ```javascript
 const { SpawnAgent } = require('./dist/index.js');
@@ -31,21 +40,40 @@ const agent = new SpawnAgent({
   token: 'YOUR_TOKEN',
   name: 'My Agent',
   onConnect: () => {
-    console.log('Connected!');
-    agent.sendText('Agent online!');
+    agent.sendText('Online!');
+    agent.updateStatus('idle', 'Ready');
   },
-  onMessage: (msg) => {
-    console.log('Message:', msg);
-  }
+  onMessage: (msg) => console.log(msg)
 });
 
 agent.connect();
 ```
 
-Run it:
+### Python
+
 ```bash
-node connect.js
+pip install websockets
 ```
+
+```python
+import asyncio
+from spawn_sdk import SpawnAgent
+
+agent = SpawnAgent(token='YOUR_TOKEN', name='My Agent')
+
+@agent.on('connect')
+async def on_connect():
+    await agent.send_text('Online!')
+    await agent.update_status('idle', 'Ready')
+
+@agent.on('message')
+async def on_message(msg):
+    print(msg)
+
+asyncio.run(agent.connect())
+```
+
+Get `spawn_sdk.py` from the repo or run `npx spawn-skill init --python`.
 
 ---
 
