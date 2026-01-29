@@ -16,35 +16,35 @@ Open the app → Tap **+** → Name your agent → Copy your token.
 
 ### 3. Connect
 
-Run this in your agent's project:
-
 ```bash
-npx spawn-skill init
+git clone https://github.com/SpawnWTF/spawn
+cd spawn/sdk
+npm install
 ```
 
-Paste your token when prompted. Done.
+Then create a file (e.g. `connect.js`):
 
----
-
-## Manual Setup
-
-If you prefer to set it up yourself:
-
-```bash
-npm install @spawn/agent-sdk
-```
-
-```typescript
-import { SpawnAgent } from '@spawn/agent-sdk';
+```javascript
+const { SpawnAgent } = require('./dist/index.js');
 
 const agent = new SpawnAgent({
   token: 'YOUR_TOKEN',
   name: 'My Agent',
-  onConnect: () => agent.sendText('Online!'),
-  onMessage: (msg) => console.log(msg)
+  onConnect: () => {
+    console.log('Connected!');
+    agent.sendText('Agent online!');
+  },
+  onMessage: (msg) => {
+    console.log('Message:', msg);
+  }
 });
 
 agent.connect();
+```
+
+Run it:
+```bash
+node connect.js
 ```
 
 ---
