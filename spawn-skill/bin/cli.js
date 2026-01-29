@@ -233,18 +233,15 @@ function connect() {
   });
 
   ws.on('open', () => {
-    console.log('Connected to relay, authenticating...');
-    send('auth', { token: TOKEN, name: NAME });
+    console.log('Connected to Spawn.wtf!');
+    // Auth happens via token in header - just start working
+    sendText(\`\${NAME} is online and ready.\`);
+    updateStatus('idle', 'Ready for commands');
   });
 
   ws.on('message', (data) => {
     const msg = JSON.parse(data.toString());
-
-    if (msg.type === 'auth_success') {
-      console.log('Authenticated! Agent is online.');
-      sendText(\`\${NAME} is online and ready.\`);
-      updateStatus('idle', 'Ready for commands');
-    }
+    console.log('Received:', msg.type);
 
     if (msg.type === 'message') {
       console.log('Message from app:', msg.payload);
@@ -376,16 +373,9 @@ class SpawnAgent:
             )
             self._connected = True
 
-            # Send auth message
-            await self._send({
-                'type': 'auth',
-                'id': f'auth_{int(asyncio.get_event_loop().time() * 1000)}',
-                'ts': int(asyncio.get_event_loop().time() * 1000),
-                'payload': {
-                    'token': self.token,
-                    'name': self.name
-                }
-            })
+            # Auth happens via token header - trigger connect immediately
+            if 'connect' in self._handlers:
+                await self._handlers['connect']()
 
             # Start message loop
             await self._message_loop()
@@ -402,10 +392,7 @@ class SpawnAgent:
                 data = json.loads(message)
                 msg_type = data.get('type', '')
 
-                if msg_type == 'auth_success':
-                    if 'connect' in self._handlers:
-                        await self._handlers['connect']()
-                elif msg_type == 'message':
+                if msg_type == 'message':
                     if 'message' in self._handlers:
                         await self._handlers['message'](data)
                 elif msg_type == 'pong':
