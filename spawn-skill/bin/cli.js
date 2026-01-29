@@ -16,7 +16,7 @@ const dim = chalk.gray;
 function printBanner() {
   console.log('');
   console.log(pink('  ╔═══════════════════════════════════════╗'));
-  console.log(pink('  ║') + chalk.white.bold('          Spawn.wtf Skill Setup         ') + pink('║'));
+  console.log(pink('  ║') + chalk.white.bold('          SPAWN.WTF Skill Setup         ') + pink('║'));
   console.log(pink('  ╚═══════════════════════════════════════╝'));
   console.log('');
 }
@@ -25,35 +25,429 @@ function printSuccess(message) {
   console.log(chalk.green('✓') + ' ' + message);
 }
 
-function printError(message) {
-  console.log(chalk.red('✗') + ' ' + message);
-}
+const SKILL_MD = `# Spawn Integration Skill
 
-async function detectClaudeInstallation() {
-  // Check common Claude Code locations
-  const possiblePaths = [
-    path.join(process.env.HOME || '', '.claude'),
-    path.join(process.cwd(), '.claude'),
-    path.join(process.cwd(), 'CLAUDE.md'),
-  ];
+## Overview
 
-  for (const p of possiblePaths) {
-    if (fs.existsSync(p)) {
-      return { found: true, path: p };
+You are connected to **Spawn**, a mobile/desktop app that serves as your user interface. Instead of raw terminal output, your responses are rendered as rich UI components on the user's phone or computer.
+
+This skill teaches you how to:
+
+1. Communicate through structured UI components
+2. Request approval for sensitive actions
+3. Spawn and manage sub-agents
+4. Respect the user's safety settings
+
+**Important:** The user has configured safety settings in the Spawn app. You must respect these settings. They represent the user's explicit preferences about what you can do autonomously vs. what requires approval.
+
+---
+
+## Communication Protocol
+
+### Sending Messages
+
+\`\`\`python
+from spawn import ui
+
+# Simple text
+ui.send_text("I've analyzed the codebase. Found 3 issues.")
+
+# Card with stats
+ui.send_card(
+    title="Code Analysis",
+    value="3 issues",
+    style="warning",
+    fields=[
+        {"label": "Critical", "value": "1"},
+        {"label": "Warning", "value": "2"},
+        {"label": "Files scanned", "value": "47"},
+    ]
+)
+\`\`\`
+
+### Status Updates
+
+Keep the user informed about what you're doing:
+
+\`\`\`python
+from spawn import status
+
+status.set("thinking", "Analyzing codebase...")
+status.set("working", "Refactoring auth.py (3/12)")
+status.set("idle")  # When done
+\`\`\`
+
+---
+
+## Approval Flows
+
+### When to Ask for Approval
+
+**Always ask** when:
+- The action involves money or trades
+- The action is irreversible (delete, deploy, send)
+- You're unsure if the user would want this
+
+**Never ask** when:
+- The action is read-only
+- You're just gathering information
+
+### How to Request Approval
+
+\`\`\`python
+from spawn import approval
+
+approved = await approval.confirm(
+    title="Delete old logs?",
+    message="This will remove 47 log files older than 30 days.",
+    danger_level="medium"  # low, medium, high, critical
+)
+
+if approved:
+    delete_logs()
+else:
+    ui.send_text("Okay, I won't delete the logs.")
+\`\`\`
+
+### Danger Levels
+
+| Level | When to Use | UI Treatment |
+|-------|-------------|--------------|
+| \`low\` | Reversible, low impact | Tap to confirm |
+| \`medium\` | Moderate impact, recoverable | Yellow card, tap to confirm |
+| \`high\` | Significant impact, hard to reverse | Red card, slide to confirm |
+| \`critical\` | Irreversible, financial, destructive | Red card, biometric required |
+
+---
+
+## Sub-Agent Spawning
+
+### Requesting a Sub-Agent
+
+\`\`\`python
+from spawn import agents
+
+sub = await agents.request_spawn(
+    name="TestRunner",
+    role="QA Engineer",
+    description="Run tests in parallel while I refactor",
+    permissions=[
+        {"scope": "files.read", "path": "/projects/tests/**"},
+        {"scope": "process.execute", "command": "pytest"},
+    ],
+    reason="I need parallel test execution to catch breaking changes quickly."
+)
+
+if sub is None:
+    ui.send_text("Understood, I'll run tests sequentially instead.")
+else:
+    await sub.start()
+\`\`\`
+
+---
+
+## Path Restrictions
+
+Before accessing any file, check if it's allowed:
+
+\`\`\`python
+from spawn import policy
+
+if policy.is_path_forbidden(path):
+    ui.send_text("I can't access that path - it's protected.")
+    return
+\`\`\`
+
+### Common Forbidden Paths
+
+- \`~/.ssh/**\` - SSH keys
+- \`~/.aws/**\` - AWS credentials
+- \`**/.env\` - Environment files
+- \`**/*.pem\`, \`**/*.key\` - Private keys
+
+---
+
+## Notifications
+
+Send push notifications for important events:
+
+\`\`\`python
+from spawn import notify
+
+notify.send(
+    title="Refactoring Complete",
+    body="All 12 files updated, tests passing.",
+    priority="normal"  # silent, normal, high, critical
+)
+\`\`\`
+
+---
+
+## Best Practices
+
+1. **Always check settings first** before taking actions
+2. **Prefer asking over assuming** - users prefer being asked
+3. **Keep user informed** - update status during long operations
+4. **Graceful degradation** - if denied, explain alternatives
+5. **Respect the spirit** - don't exploit technical loopholes
+
+The user trusts you enough to give you capabilities. Honor that trust by respecting their configured limits.
+`;
+
+function getTypeScriptConnector(token, agentName) {
+  return `/**
+ * Spawn.wtf Agent Connector
+ * Run with: node connect.js
+ */
+
+const { SpawnAgent } = require('./node_modules/@spawn/agent-sdk/dist/index.js');
+
+const agent = new SpawnAgent({
+  token: '${token}',
+  name: '${agentName}',
+
+  onConnect: () => {
+    console.log('Connected to Spawn.wtf!');
+    agent.sendText('${agentName} is online and ready.');
+    agent.updateStatus('idle', 'Ready for commands');
+  },
+
+  onMessage: (msg) => {
+    console.log('Message from app:', msg);
+
+    if (msg.type === 'message') {
+      const text = msg.payload.text || '';
+      agent.updateStatus('thinking', 'Processing...');
+
+      // Echo back
+      setTimeout(() => {
+        agent.sendText(\`You said: "\${text}"\`);
+        agent.updateStatus('idle', 'Ready');
+      }, 500);
     }
-  }
+  },
 
-  // Check if we're in a project directory
-  if (fs.existsSync(path.join(process.cwd(), 'package.json')) ||
-      fs.existsSync(path.join(process.cwd(), 'Cargo.toml')) ||
-      fs.existsSync(path.join(process.cwd(), 'pyproject.toml'))) {
-    return { found: true, path: process.cwd(), isProject: true };
-  }
+  onDisconnect: () => {
+    console.log('Disconnected from Spawn.wtf');
+  },
 
-  return { found: false };
+  onError: (err) => {
+    console.error('Error:', err.message);
+  }
+});
+
+agent.connect();
+console.log('Connecting to Spawn.wtf...');
+
+process.on('SIGINT', () => {
+  agent.disconnect();
+  process.exit(0);
+});
+`;
 }
 
-async function createSkillFiles(token, agentName) {
+function getPythonConnector(token, agentName) {
+  return `"""
+Spawn.wtf Agent Connector
+Run with: python connect.py
+"""
+
+import asyncio
+import json
+import signal
+import sys
+from spawn_sdk import SpawnAgent
+
+agent = SpawnAgent(
+    token='${token}',
+    name='${agentName}'
+)
+
+@agent.on('connect')
+async def on_connect():
+    print('Connected to Spawn.wtf!')
+    await agent.send_text('${agentName} is online and ready.')
+    await agent.update_status('idle', 'Ready for commands')
+
+@agent.on('message')
+async def on_message(msg):
+    print(f'Message from app: {msg}')
+
+    if msg.get('type') == 'message':
+        text = msg.get('payload', {}).get('text', '')
+        await agent.update_status('thinking', 'Processing...')
+
+        # Echo back
+        await asyncio.sleep(0.5)
+        await agent.send_text(f'You said: "{text}"')
+        await agent.update_status('idle', 'Ready')
+
+@agent.on('disconnect')
+async def on_disconnect():
+    print('Disconnected from Spawn.wtf')
+
+@agent.on('error')
+async def on_error(err):
+    print(f'Error: {err}')
+
+def signal_handler(sig, frame):
+    asyncio.create_task(agent.disconnect())
+    sys.exit(0)
+
+signal.signal(signal.SIGINT, signal_handler)
+
+if __name__ == '__main__':
+    print('Connecting to Spawn.wtf...')
+    asyncio.run(agent.connect())
+`;
+}
+
+function getPythonSDK() {
+  return `"""
+Spawn.wtf Python SDK
+"""
+
+import asyncio
+import json
+import websockets
+from typing import Callable, Optional, Dict, Any
+
+class SpawnAgent:
+    def __init__(self, token: str, name: str, relay_url: str = 'wss://spawn-relay.ngvsqdjj5r.workers.dev/v1/agent'):
+        self.token = token
+        self.name = name
+        self.relay_url = relay_url
+        self.ws: Optional[websockets.WebSocketClientProtocol] = None
+        self._handlers: Dict[str, Callable] = {}
+        self._connected = False
+
+    def on(self, event: str):
+        """Decorator to register event handlers"""
+        def decorator(func: Callable):
+            self._handlers[event] = func
+            return func
+        return decorator
+
+    async def connect(self):
+        """Connect to the Spawn relay"""
+        try:
+            self.ws = await websockets.connect(
+                self.relay_url,
+                extra_headers={'Authorization': f'Bearer {self.token}'}
+            )
+            self._connected = True
+
+            # Send auth message
+            await self._send({
+                'type': 'auth',
+                'id': f'auth_{int(asyncio.get_event_loop().time() * 1000)}',
+                'ts': int(asyncio.get_event_loop().time() * 1000),
+                'payload': {
+                    'token': self.token,
+                    'name': self.name
+                }
+            })
+
+            # Start message loop
+            await self._message_loop()
+
+        except Exception as e:
+            if 'error' in self._handlers:
+                await self._handlers['error'](str(e))
+            raise
+
+    async def _message_loop(self):
+        """Main message receiving loop"""
+        try:
+            async for message in self.ws:
+                data = json.loads(message)
+                msg_type = data.get('type', '')
+
+                if msg_type == 'auth_success':
+                    if 'connect' in self._handlers:
+                        await self._handlers['connect']()
+                elif msg_type == 'message':
+                    if 'message' in self._handlers:
+                        await self._handlers['message'](data)
+                elif msg_type == 'pong':
+                    pass  # Keep-alive response
+
+        except websockets.ConnectionClosed:
+            self._connected = False
+            if 'disconnect' in self._handlers:
+                await self._handlers['disconnect']()
+
+    async def _send(self, data: Dict[str, Any]):
+        """Send a message to the relay"""
+        if self.ws and self._connected:
+            await self.ws.send(json.dumps(data))
+
+    async def send_text(self, text: str, format: str = 'plain'):
+        """Send a text message"""
+        await self._send({
+            'type': 'message',
+            'id': f'msg_{int(asyncio.get_event_loop().time() * 1000)}',
+            'ts': int(asyncio.get_event_loop().time() * 1000),
+            'payload': {
+                'content_type': 'text',
+                'text': text,
+                'format': format
+            }
+        })
+
+    async def send_card(self, title: str, subtitle: str = None, style: str = 'default',
+                        fields: list = None, footer: str = None):
+        """Send a card message"""
+        await self._send({
+            'type': 'message',
+            'id': f'msg_{int(asyncio.get_event_loop().time() * 1000)}',
+            'ts': int(asyncio.get_event_loop().time() * 1000),
+            'payload': {
+                'content_type': 'card',
+                'card': {
+                    'title': title,
+                    'subtitle': subtitle,
+                    'style': style,
+                    'fields': fields or [],
+                    'footer': footer
+                }
+            }
+        })
+
+    async def update_status(self, status: str, label: str = None):
+        """Update agent status"""
+        await self._send({
+            'type': 'status_update',
+            'id': f'status_{int(asyncio.get_event_loop().time() * 1000)}',
+            'ts': int(asyncio.get_event_loop().time() * 1000),
+            'payload': {
+                'status': status,
+                'label': label
+            }
+        })
+
+    async def notify(self, title: str, body: str, priority: str = 'normal'):
+        """Send a push notification"""
+        await self._send({
+            'type': 'notification',
+            'id': f'notif_{int(asyncio.get_event_loop().time() * 1000)}',
+            'ts': int(asyncio.get_event_loop().time() * 1000),
+            'payload': {
+                'title': title,
+                'body': body,
+                'priority': priority
+            }
+        })
+
+    async def disconnect(self):
+        """Disconnect from the relay"""
+        if self.ws:
+            await self.ws.close()
+            self._connected = False
+`;
+}
+
+async function createSkillFiles(token, agentName, language) {
   const skillDir = path.join(process.cwd(), 'spawn');
 
   // Create spawn directory
@@ -62,159 +456,50 @@ async function createSkillFiles(token, agentName) {
   }
 
   // Create SKILL.md
-  const skillMd = `# Spawn.wtf Agent Skill
-
-This skill connects your Claude agent to the Spawn.wtf mobile app for real-time monitoring and control.
-
-## Features
-
-- Real-time status updates visible in the iOS app
-- Send/receive messages from your phone
-- Confirmation requests for sensitive actions
-- Sub-agent spawn approval workflow
-
-## Configuration
-
-Agent Name: ${agentName}
-Token: ${token.slice(0, 20)}...
-
-## Usage
-
-The skill automatically:
-1. Connects to Spawn.wtf relay on startup
-2. Sends status updates as you work
-3. Forwards messages between you and the mobile app
-
-## Commands
-
-- \`/spawn status\` - Check connection status
-- \`/spawn send <message>\` - Send message to app
-- \`/spawn notify <title> <body>\` - Send push notification
-`;
-
-  fs.writeFileSync(path.join(skillDir, 'SKILL.md'), skillMd);
+  fs.writeFileSync(path.join(skillDir, 'SKILL.md'), SKILL_MD);
 
   // Create config file
   const config = {
     name: agentName,
     token: token,
     relay: 'wss://spawn-relay.ngvsqdjj5r.workers.dev/v1/agent',
-    autoConnect: true,
+    language: language
   };
+  fs.writeFileSync(path.join(skillDir, 'config.json'), JSON.stringify(config, null, 2));
 
-  fs.writeFileSync(
-    path.join(skillDir, 'config.json'),
-    JSON.stringify(config, null, 2)
-  );
+  if (language === 'typescript') {
+    // TypeScript/Node setup
+    fs.writeFileSync(path.join(skillDir, 'connect.js'), getTypeScriptConnector(token, agentName));
 
-  // Create .env if it doesn't exist, or append to it
-  const envPath = path.join(process.cwd(), '.env');
-  const envLine = `SPAWN_TOKEN=${token}\nSPAWN_AGENT_NAME=${agentName}\n`;
+    const packageJson = {
+      name: "spawn-agent",
+      version: "1.0.0",
+      type: "commonjs",
+      dependencies: {
+        "@spawn/agent-sdk": "github:SpawnWTF/spawn#main:sdk"
+      }
+    };
+    fs.writeFileSync(path.join(skillDir, 'package.json'), JSON.stringify(packageJson, null, 2));
 
-  if (fs.existsSync(envPath)) {
-    const existing = fs.readFileSync(envPath, 'utf-8');
-    if (!existing.includes('SPAWN_TOKEN')) {
-      fs.appendFileSync(envPath, '\n# Spawn.wtf Agent Configuration\n' + envLine);
-    }
   } else {
-    fs.writeFileSync(envPath, '# Spawn.wtf Agent Configuration\n' + envLine);
+    // Python setup
+    fs.writeFileSync(path.join(skillDir, 'connect.py'), getPythonConnector(token, agentName));
+    fs.writeFileSync(path.join(skillDir, 'spawn_sdk.py'), getPythonSDK());
+    fs.writeFileSync(path.join(skillDir, 'requirements.txt'), 'websockets>=12.0\n');
   }
 
-  // Create a simple connector script
-  const connectorScript = `/**
- * Spawn.wtf Agent Connector
- *
- * This script connects your agent to the Spawn.wtf mobile app.
- * Run with: node spawn/connect.js
- */
-
-import WebSocket from 'ws';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf-8'));
-
-const ws = new WebSocket(config.relay, {
-  headers: {
-    'Authorization': \`Bearer \${config.token}\`,
-  },
-});
-
-ws.on('open', () => {
-  console.log('Connected to Spawn.wtf relay');
-
-  // Send initial status
-  ws.send(JSON.stringify({
-    type: 'status_update',
-    id: \`msg_\${Date.now()}\`,
-    ts: Date.now(),
-    payload: {
-      status: 'idle',
-      label: 'Ready',
-    },
-  }));
-});
-
-ws.on('message', (data) => {
-  const msg = JSON.parse(data.toString());
-  console.log('Received:', msg.type);
-
-  if (msg.type === 'message') {
-    console.log('Message from app:', msg.payload.text);
-  }
-});
-
-ws.on('close', () => {
-  console.log('Disconnected from relay');
-});
-
-ws.on('error', (err) => {
-  console.error('WebSocket error:', err.message);
-});
-
-// Keep alive
-setInterval(() => {
-  if (ws.readyState === WebSocket.OPEN) {
-    ws.send(JSON.stringify({
-      type: 'ping',
-      id: \`ping_\${Date.now()}\`,
-      ts: Date.now(),
-      payload: {},
-    }));
-  }
-}, 30000);
-
-console.log('Spawn.wtf agent connector running...');
-console.log('Press Ctrl+C to disconnect');
-`;
-
-  fs.writeFileSync(path.join(skillDir, 'connect.js'), connectorScript);
-
-  // Create package.json for the spawn folder
-  const packageJson = {
-    name: "spawn-agent",
-    version: "1.0.0",
-    type: "module",
-    dependencies: {
-      ws: "^8.16.0"
-    }
-  };
-  fs.writeFileSync(path.join(skillDir, 'package.json'), JSON.stringify(packageJson, null, 2));
-
-  return skillDir;
+  return { skillDir, language };
 }
 
 async function main() {
   printBanner();
 
-  // Check for token argument
+  // Parse arguments
   const args = process.argv.slice(2);
   let token = null;
   let agentName = 'Claude';
+  let language = null;
 
-  // Parse arguments
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--token' || args[i] === '-t') {
       token = args[i + 1];
@@ -222,89 +507,109 @@ async function main() {
     if (args[i] === '--name' || args[i] === '-n') {
       agentName = args[i + 1];
     }
-    if (args[i] === 'init') {
-      // Just the init command, continue
+    if (args[i] === '--python' || args[i] === '-py') {
+      language = 'python';
+    }
+    if (args[i] === '--node' || args[i] === '--typescript' || args[i] === '-ts') {
+      language = 'typescript';
     }
   }
 
-  // Detect Claude installation
-  const spinner = ora('Detecting Claude installation...').start();
-  const detection = await detectClaudeInstallation();
+  // Interactive prompts
+  const questions = [];
 
-  if (detection.found) {
-    spinner.succeed('Detected Claude Code installation');
-  } else {
-    spinner.info('No Claude installation detected, setting up in current directory');
-  }
-
-  console.log('');
-
-  // Prompt for token if not provided
   if (!token) {
-    const answers = await inquirer.prompt([
-      {
-        type: 'password',
-        name: 'token',
-        message: 'Enter your Spawn.wtf agent token:',
-        mask: '*',
-        validate: (input) => {
-          if (!input.startsWith('spwn_sk_')) {
-            return 'Token should start with spwn_sk_';
-          }
-          if (input.length < 20) {
-            return 'Token seems too short';
-          }
-          return true;
-        },
-      },
-      {
-        type: 'input',
-        name: 'agentName',
-        message: 'Agent name:',
-        default: agentName,
-      },
-    ]);
-
-    token = answers.token;
-    agentName = answers.agentName;
+    questions.push({
+      type: 'password',
+      name: 'token',
+      message: 'Enter your Spawn.wtf agent token:',
+      mask: '*',
+      validate: (input) => {
+        if (!input.startsWith('spwn_sk_')) {
+          return 'Token should start with spwn_sk_';
+        }
+        return true;
+      }
+    });
   }
+
+  questions.push({
+    type: 'input',
+    name: 'agentName',
+    message: 'Agent name:',
+    default: agentName
+  });
+
+  if (!language) {
+    questions.push({
+      type: 'list',
+      name: 'language',
+      message: 'Choose your language:',
+      choices: [
+        { name: 'TypeScript / Node.js', value: 'typescript' },
+        { name: 'Python', value: 'python' }
+      ]
+    });
+  }
+
+  const answers = await inquirer.prompt(questions);
+
+  token = token || answers.token;
+  agentName = answers.agentName || agentName;
+  language = language || answers.language;
 
   console.log('');
 
   // Create files
   const createSpinner = ora('Creating skill files...').start();
   try {
-    const skillDir = await createSkillFiles(token, agentName);
+    const { skillDir } = await createSkillFiles(token, agentName, language);
     createSpinner.succeed('Created skill files');
-    printSuccess('Added token to .env');
   } catch (err) {
     createSpinner.fail('Failed to create skill files');
-    printError(err.message);
+    console.error(err.message);
     process.exit(1);
   }
 
   console.log('');
-  console.log(chalk.green.bold('✓ Spawn.wtf skill installed successfully!'));
+  console.log(chalk.green.bold('✓ Spawn.wtf skill installed!'));
   console.log('');
 
-  console.log('  Files created:');
-  console.log(dim('    spawn/SKILL.md'));
-  console.log(dim('    spawn/config.json'));
-  console.log(dim('    spawn/connect.js'));
-  console.log(dim('    spawn/package.json'));
-  console.log('');
+  if (language === 'typescript') {
+    console.log('  Files created:');
+    console.log(dim('    spawn/SKILL.md'));
+    console.log(dim('    spawn/config.json'));
+    console.log(dim('    spawn/connect.js'));
+    console.log(dim('    spawn/package.json'));
+    console.log('');
+    console.log('  Next steps:');
+    console.log('');
+    console.log('  1. ' + chalk.cyan('Install dependencies:'));
+    console.log('     ' + dim('cd spawn && npm install'));
+    console.log('');
+    console.log('  2. ' + chalk.cyan('Run the connector:'));
+    console.log('     ' + dim('node spawn/connect.js'));
+  } else {
+    console.log('  Files created:');
+    console.log(dim('    spawn/SKILL.md'));
+    console.log(dim('    spawn/config.json'));
+    console.log(dim('    spawn/connect.py'));
+    console.log(dim('    spawn/spawn_sdk.py'));
+    console.log(dim('    spawn/requirements.txt'));
+    console.log('');
+    console.log('  Next steps:');
+    console.log('');
+    console.log('  1. ' + chalk.cyan('Install dependencies:'));
+    console.log('     ' + dim('cd spawn && pip install -r requirements.txt'));
+    console.log('');
+    console.log('  2. ' + chalk.cyan('Run the connector:'));
+    console.log('     ' + dim('python spawn/connect.py'));
+  }
 
-  console.log('  Next steps:');
-  console.log('');
-  console.log('  1. ' + chalk.cyan('Install dependencies:'));
-  console.log('     ' + dim('cd spawn && npm install'));
-  console.log('');
-  console.log('  2. ' + chalk.cyan('Test connection:'));
-  console.log('     ' + dim('node spawn/connect.js'));
   console.log('');
   console.log('  3. ' + chalk.cyan('Open Spawn.wtf app') + ' - your agent should appear!');
   console.log('');
-  console.log('  Docs: ' + pink('https://spawn.wtf/docs'));
+  console.log('  Docs: ' + pink('https://github.com/SpawnWTF/spawn'));
   console.log('');
 }
 
