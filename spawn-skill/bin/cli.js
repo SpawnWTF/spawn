@@ -200,47 +200,86 @@ function getTypeScriptConnector(token, agentName) {
  * Run with: node connect.js
  */
 
-const { SpawnAgent } = require('./node_modules/@spawn/agent-sdk/dist/index.js');
+import WebSocket from 'ws';
 
-const agent = new SpawnAgent({
-  token: '${token}',
-  name: '${agentName}',
+const TOKEN = '${token}';
+const NAME = '${agentName}';
+const RELAY = 'wss://spawn-relay.ngvsqdjj5r.workers.dev/v1/agent';
 
-  onConnect: () => {
-    console.log('Connected to Spawn.wtf!');
-    agent.sendText('${agentName} is online and ready.');
-    agent.updateStatus('idle', 'Ready for commands');
-  },
+let ws;
 
-  onMessage: (msg) => {
-    console.log('Message from app:', msg);
+function send(type, payload) {
+  if (ws?.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify({
+      type,
+      id: \`msg_\${Date.now()}\`,
+      ts: Date.now(),
+      payload
+    }));
+  }
+}
+
+function sendText(text) {
+  send('message', { content_type: 'text', text, format: 'plain' });
+}
+
+function updateStatus(status, label) {
+  send('status_update', { status, label });
+}
+
+function connect() {
+  ws = new WebSocket(RELAY, {
+    headers: { 'Authorization': \`Bearer \${TOKEN}\` }
+  });
+
+  ws.on('open', () => {
+    console.log('Connected to relay, authenticating...');
+    send('auth', { token: TOKEN, name: NAME });
+  });
+
+  ws.on('message', (data) => {
+    const msg = JSON.parse(data.toString());
+
+    if (msg.type === 'auth_success') {
+      console.log('Authenticated! Agent is online.');
+      sendText(\`\${NAME} is online and ready.\`);
+      updateStatus('idle', 'Ready for commands');
+    }
 
     if (msg.type === 'message') {
-      const text = msg.payload.text || '';
-      agent.updateStatus('thinking', 'Processing...');
+      console.log('Message from app:', msg.payload);
+      const text = msg.payload?.text || '';
 
-      // Echo back
+      updateStatus('thinking', 'Processing...');
       setTimeout(() => {
-        agent.sendText(\`You said: "\${text}"\`);
-        agent.updateStatus('idle', 'Ready');
+        sendText(\`You said: "\${text}"\`);
+        updateStatus('idle', 'Ready');
       }, 500);
     }
-  },
+  });
 
-  onDisconnect: () => {
-    console.log('Disconnected from Spawn.wtf');
-  },
+  ws.on('close', () => {
+    console.log('Disconnected from relay');
+  });
 
-  onError: (err) => {
-    console.error('Error:', err.message);
+  ws.on('error', (err) => {
+    console.error('WebSocket error:', err.message);
+  });
+}
+
+// Keep alive
+setInterval(() => {
+  if (ws?.readyState === WebSocket.OPEN) {
+    send('ping', {});
   }
-});
+}, 30000);
 
-agent.connect();
 console.log('Connecting to Spawn.wtf...');
+connect();
 
 process.on('SIGINT', () => {
-  agent.disconnect();
+  console.log('Shutting down...');
+  ws?.close();
   process.exit(0);
 });
 `;
@@ -474,9 +513,9 @@ async function createSkillFiles(token, agentName, language) {
     const packageJson = {
       name: "spawn-agent",
       version: "1.0.0",
-      type: "commonjs",
+      type: "module",
       dependencies: {
-        "@spawn/agent-sdk": "github:SpawnWTF/spawn#main:sdk"
+        ws: "^8.16.0"
       }
     };
     fs.writeFileSync(path.join(skillDir, 'package.json'), JSON.stringify(packageJson, null, 2));
