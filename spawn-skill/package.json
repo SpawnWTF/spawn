@@ -6,22 +6,19 @@
     "spawn-skill": "./bin/cli.js"
   },
   "type": "module",
-  "scripts": {
-    "build": "tsc",
-    "prepublishOnly": "npm run build"
-  },
+  "files": [
+    "bin"
+  ],
   "keywords": ["spawn", "ai", "agent", "claude", "monitoring"],
   "author": "Spawn.wtf",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SpawnWTF/spawn"
+  },
   "dependencies": {
     "chalk": "^5.3.0",
     "inquirer": "^9.2.12",
-    "ora": "^8.0.1",
-    "ws": "^8.16.0"
-  },
-  "devDependencies": {
-    "@types/inquirer": "^9.0.7",
-    "@types/node": "^20.10.0",
-    "typescript": "^5.3.0"
+    "ora": "^8.0.1"
   }
 }
