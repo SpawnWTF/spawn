@@ -192,6 +192,17 @@ console.log('Press Ctrl+C to disconnect');
 
   fs.writeFileSync(path.join(skillDir, 'connect.js'), connectorScript);
 
+  // Create package.json for the spawn folder
+  const packageJson = {
+    name: "spawn-agent",
+    version: "1.0.0",
+    type: "module",
+    dependencies: {
+      ws: "^8.16.0"
+    }
+  };
+  fs.writeFileSync(path.join(skillDir, 'package.json'), JSON.stringify(packageJson, null, 2));
+
   return skillDir;
 }
 
@@ -280,14 +291,18 @@ async function main() {
   console.log(dim('    spawn/SKILL.md'));
   console.log(dim('    spawn/config.json'));
   console.log(dim('    spawn/connect.js'));
+  console.log(dim('    spawn/package.json'));
   console.log('');
 
   console.log('  Next steps:');
   console.log('');
-  console.log('  1. ' + chalk.cyan('Test connection:'));
+  console.log('  1. ' + chalk.cyan('Install dependencies:'));
+  console.log('     ' + dim('cd spawn && npm install'));
+  console.log('');
+  console.log('  2. ' + chalk.cyan('Test connection:'));
   console.log('     ' + dim('node spawn/connect.js'));
   console.log('');
-  console.log('  2. ' + chalk.cyan('Open Spawn.wtf app') + ' - your agent should appear!');
+  console.log('  3. ' + chalk.cyan('Open Spawn.wtf app') + ' - your agent should appear!');
   console.log('');
   console.log('  Docs: ' + pink('https://spawn.wtf/docs'));
   console.log('');
